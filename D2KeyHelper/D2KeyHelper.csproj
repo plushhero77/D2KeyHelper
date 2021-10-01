@@ -22,4 +22,8 @@
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\NativeWIn32.dll.csproj" />
+  </ItemGroup>
+
 </Project>

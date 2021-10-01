@@ -1,4 +1,5 @@
-﻿using D2KeyHelper.Services;
+﻿using NativeWin32;
+using D2KeyHelper.Services;
 using DevExpress.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using static D2KeyHelper.Services.HookService;
+using NativeWin32;
 
 namespace D2KeyHelper.Viewmodels.Main
 {
@@ -35,19 +36,8 @@ namespace D2KeyHelper.Viewmodels.Main
         {
             Key = typeof(ConsoleKey).GetEnumName(Marshal.ReadInt32(obj));
 
-            NativeWin32.GetWindowThreadProcessId(NativeWin32.GetForegroundWindow(), out int id);
+            NativeWin32.NativeWin32.GetWindowThreadProcessId(NativeWin32.NativeWin32.GetForegroundWindow(), out int id);
             EventProcId = id.ToString();
-
-            const uint WM_LBUTTONDOWN = 0x0201;
-            const uint WM_LBUTTONUP = 0x0202;
-
-
-            //int X = X - WindowRect.left;
-            //int Y = Y - winsowRect.top;
-            //int lparm = (Y << 16) + X;
-            //int lngResult = SendMessage(iHandle, WM_LBUTTONDOWN, 0, lparm);
-            //int lngResult2 = SendMessage(iHandle, WM_LBUTTONUP, 0, lparm);
-
         }
 
         public Process Scan()

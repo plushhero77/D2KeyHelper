@@ -4,10 +4,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static NativeWin32.Structs.NativeWin32Structs;
 
-namespace D2KeyHelper.Services
+namespace NativeWin32
 {
-    public static class NativeWin32
+    public class NativeWin32
     {
         public delegate int HookProc(int code, IntPtr wParam, IntPtr lParam);
 
@@ -30,5 +31,7 @@ namespace D2KeyHelper.Services
         public static extern void keybd_event(char bVk, byte bScan, int dwFlags, ulong dwExtraInfo);
         [DllImport("user32.dll")]
         public static extern int SendMessage(int hWnd, uint Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        public static extern uint SendInput(uint nInputs, [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs, int cbSize);
     }
 }

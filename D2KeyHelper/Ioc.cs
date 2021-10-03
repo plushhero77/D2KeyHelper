@@ -1,6 +1,6 @@
-﻿using D2KeyHelper.Services;
+﻿using D2KeyHelper.Pages;
+using D2KeyHelper.Services;
 using D2KeyHelper.Viewmodels;
-using D2KeyHelper.Viewmodels.Main;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,11 @@ namespace D2KeyHelper
             var services = new ServiceCollection();
 
             services.AddSingleton<mainVM>();
+            services.AddSingleton<KeyBindingPage>();
+
+
             services.AddSingleton<HookService>();
+            services.AddTransient<PageNavigationService>();
 
             _provider = services.BuildServiceProvider();
         }

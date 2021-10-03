@@ -6,33 +6,33 @@ using System.Text;
 using System.Threading.Tasks;
 using static NativeWin32.NativeWin32Enums;
 
-namespace NativeWin32.Structs
+namespace NativeWin32
 {
     public class NativeWin32Structs
     {
         [StructLayout(LayoutKind.Sequential)]
         public struct INPUT
         {
-            internal uint type;
-            internal InputUnion U;
-            internal static int Size
+            public uint type;
+            public InputUnion U;
+            public static int Size
             {
                 get { return Marshal.SizeOf(typeof(INPUT)); }
             }
         }
 
         [StructLayout(LayoutKind.Explicit)]
-        internal struct InputUnion
+        public struct InputUnion
         {
             [FieldOffset(0)]
-            internal MOUSEINPUT mi;
+            public MOUSEINPUT mi;
             [FieldOffset(0)]
-            internal KEYBDINPUT ki;
+            public KEYBDINPUT ki;
             [FieldOffset(0)]
-            internal HARDWAREINPUT hi;
+            public HARDWAREINPUT hi;
         }
         [StructLayout(LayoutKind.Sequential)]
-        internal struct MOUSEINPUT
+        public struct MOUSEINPUT
         {
             internal int dx;
             internal int dy;
@@ -42,16 +42,16 @@ namespace NativeWin32.Structs
             internal UIntPtr dwExtraInfo;
         }
         [StructLayout(LayoutKind.Sequential)]
-        internal struct KEYBDINPUT
+        public struct KEYBDINPUT
         {
-            internal VirtualKeyShort wVk;
-            internal ScanCodeShort wScan;
+            public VirtualKeyShort wVk;
+            public ScanCodeShort wScan;
             internal KEYEVENTF dwFlags;
             internal int time;
             internal UIntPtr dwExtraInfo;
         }
         [StructLayout(LayoutKind.Sequential)]
-        internal struct HARDWAREINPUT
+        public struct HARDWAREINPUT
         {
             internal int uMsg;
             internal short wParamL;

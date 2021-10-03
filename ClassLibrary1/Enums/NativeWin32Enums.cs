@@ -9,7 +9,7 @@ namespace NativeWin32
     public static class NativeWin32Enums
     {
         [Flags]
-        internal enum MOUSEEVENTF : uint
+        public enum MOUSEEVENTF : uint
         {
             ABSOLUTE = 0x8000,
             HWHEEL = 0x01000,
@@ -27,15 +27,14 @@ namespace NativeWin32
             XUP = 0x0100
         }
         [Flags]
-        internal enum KEYEVENTF : uint
+        public enum KEYEVENTF : uint
         {
             EXTENDEDKEY = 0x0001,
             KEYUP = 0x0002,
             SCANCODE = 0x0008,
             UNICODE = 0x0004
         }
-
-        internal enum VirtualKeyShort : short
+        public enum VirtualKeyShort : short
         {
             ///<summary>
             ///Left mouse button
@@ -728,7 +727,7 @@ namespace NativeWin32
             ///</summary>
             OEM_CLEAR = 0xFE
         }
-        internal enum ScanCodeShort : short
+        public enum ScanCodeShort : short
         {
             LBUTTON = 0,
             RBUTTON = 0,
@@ -902,6 +901,19 @@ namespace NativeWin32
             NONAME = 0,
             PA1 = 0,
             OEM_CLEAR = 0,
+        }
+        public enum INPUT_TYPE : uint
+        {
+            INPUT_MOUSE = 0,
+            INPUT_KEYBOARD = 1,
+            INPUT_HARDWARE = 2
+        }
+        public enum WM_WPARAM
+        {
+            WM_KEYUP = 0x0101,
+            WM_KEYDOWN = 0x0100,
+            WM_SYSKEYUP = 0x0105,
+            WM_SYSKEYDOWN = 0x0104
         }
     }
 }

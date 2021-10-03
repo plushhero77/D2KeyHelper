@@ -1,5 +1,4 @@
 ﻿using D2KeyHelper.Viewmodels;
-using D2KeyHelper.Viewmodels.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;

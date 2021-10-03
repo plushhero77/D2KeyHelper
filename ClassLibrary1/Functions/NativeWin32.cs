@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using static NativeWin32.Structs.NativeWin32Structs;
+using static NativeWin32.NativeWin32Structs;
 
 namespace NativeWin32
 {
@@ -14,6 +14,9 @@ namespace NativeWin32
 
         [DllImport("user32.dll", EntryPoint = "SetWindowsHookEx", SetLastError = true)]
         public static extern IntPtr SetWindowsHookEx(int idHook, HookProc lpfn, IntPtr hMod, int dwThreadId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
@@ -29,8 +32,10 @@ namespace NativeWin32
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern void keybd_event(char bVk, byte bScan, int dwFlags, ulong dwExtraInfo);
+
         [DllImport("user32.dll")]
         public static extern int SendMessage(int hWnd, uint Msg, int wParam, int lParam);
+
         [DllImport("user32.dll")]
         public static extern uint SendInput(uint nInputs, [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs, int cbSize);
     }

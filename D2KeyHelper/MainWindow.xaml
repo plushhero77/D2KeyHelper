@@ -13,11 +13,14 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <Label HorizontalAlignment="Center" Content="{Binding D2ProcStatus}"/>
-            <Button Margin="10" VerticalAlignment="Top" Height="30" Content="StartLIstener" Command="{Binding StartLIstener}"/>
-            <Label HorizontalAlignment="Center" Content="{Binding Key}"/>
-            <Label HorizontalAlignment="Center" Content="{Binding RuningProcId}"/>
-            <Label HorizontalAlignment="Center" Content="{Binding EventProcId}"/>
+            <Label HorizontalAlignment="Left" FontSize="18" Content="{Binding D2ProcStatus}"/>
+            <StackPanel Orientation="Horizontal">
+                <Button Margin="10" VerticalAlignment="Top" Height="30" Content="Start KeyHelper" Command="{Binding StartLIstener}"/>
+                <Button Margin="10" VerticalAlignment="Top" Height="30" Content="Key Binding Set" Command="{Binding StartLIstener}"/>
+            </StackPanel>
         </StackPanel>
+        <Frame Grid.Row="1" NavigationUIVisibility="Hidden" Content="{}"/>
+
+
     </Grid>
 </Window>

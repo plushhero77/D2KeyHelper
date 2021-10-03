@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace D2KeyHelper.Viewmodels.Main
+namespace D2KeyHelper.Interfaces
 {
-    public class KeyBindingVM
+    public interface IProfile
     {
         
     }

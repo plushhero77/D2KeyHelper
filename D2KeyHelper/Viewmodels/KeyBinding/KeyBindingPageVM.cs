@@ -3,49 +3,36 @@ using DevExpress.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
+using NativeWin32.Enums;
 using System.Windows.Input;
 
 namespace D2KeyHelper.Viewmodels.KeyBinding
 {
     public class KeyBindingPageVM : BindableBase
     {
-        private readonly HookService hookService;
-        public bool UseKeyUpEvent { get; set; }
-        public bool UseKeyDownEvent { get; set; }
-        public ObservableCollection<StackPanel> StackPanels { get; set; }
-        public Dictionary<string, ConsoleKey> ConsoleKeys { get; set; }
+        public HookService HookService { get; }
+        public string[] MyProperty { get; set; }
 
         public KeyBindingPageVM(HookService _hookService)
         {
-            hookService = _hookService;
-
-            StackPanels = new ObservableCollection<StackPanel>();
-            ConsoleKeys = new Dictionary<string, ConsoleKey>();
-
-            Init();
+            HookService = _hookService;
+            MyProperty = Enum.GetNames<VirtualKeyShort>();
         }
+        
+        public ICommand SetKeyBinding => new DelegateCommand<EBindedKeys>(obj => {
+            
+        });
 
-        private void Init()
-        {
-            ConsoleKey[] keys = new ConsoleKey[] { ConsoleKey.Escape, ConsoleKey.Enter, ConsoleKey.Tab, ConsoleKey.UpArrow, ConsoleKey.Add, ConsoleKey.LeftArrow };
-            for (int i = 0; i < keys.Length; i++)
-            {
-                ConsoleKeys.Add($"User Skill {i}", keys[i]);
-            }
-
-        }
-
+        public ICommand FindKey => new DelegateCommand(()=> {
+            
+        });
         public ICommand SetWParamToKeyUpEvent => new DelegateCommand<object>(obj =>
         {
-            var wParam = Enum.Parse(typeof(NativeWin32.NativeWin32Enums.WM_WPARAM), obj.ToString());
-            hookService.WM_WPARAM = (NativeWin32.NativeWin32Enums.WM_WPARAM)wParam;
-            MessageBox.Show(hookService.WM_WPARAM.ToString());
+            var wParam = Enum.Parse(typeof(WM_WPARAM), obj.ToString());
+            HookService.WM_WPARAM = (WM_WPARAM)wParam;
+            MessageBox.Show(HookService.WM_WPARAM.ToString());
         });
     }
 }

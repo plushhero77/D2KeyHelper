@@ -29,27 +29,6 @@ namespace D2KeyHelper.Viewmodels
         }
 
         private void _navigationService_OnPageChanged(Page page) => CurrentPage = page;
-        private void HookService_OnKeyPressed(IntPtr obj)
-        {
-            NativeWin32.NativeWin32.GetWindowThreadProcessId(NativeWin32.NativeWin32.GetForegroundWindow(), out int id);
-
-            var pInputs = new[]
-            {
-                new NativeWin32Structs.INPUT()
-                {
-                    type = ((uint)NativeWin32Enums.INPUT_TYPE.INPUT_KEYBOARD),
-                    U = new NativeWin32Structs.InputUnion()
-                    {
-                        ki = new NativeWin32Structs.KEYBDINPUT
-                        {
-                            wScan =  NativeWin32Enums.ScanCodeShort.KEY_Z,
-                            wVk = NativeWin32Enums.VirtualKeyShort.KEY_Z
-                        }
-                    }
-                }
-            };
-            NativeWin32.NativeWin32.SendInput(((uint)pInputs.Length), pInputs, NativeWin32Structs.INPUT.Size);
-        }
 
         //public Process Scan()
         //{

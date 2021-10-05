@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Timers;
 using System.Windows.Controls;
 using D2KeyHelper.Pages;
+using System.Windows;
 
 namespace D2KeyHelper.Viewmodels
 {
@@ -16,7 +17,7 @@ namespace D2KeyHelper.Viewmodels
         private readonly HookService hookService;
         private readonly PageNavigationService navigationService;
 
-        public string D2ProcStatus { get; set; } = "Scan D2R Proces";
+        public bool D2ProcStatus { get; set; }
         public Page CurrentPage { get; set; }
 
         public mainVM(HookService _hookService, PageNavigationService _navigationService)
@@ -24,8 +25,7 @@ namespace D2KeyHelper.Viewmodels
             this.hookService = _hookService;
             this.navigationService = _navigationService;
             _navigationService.OnPageChanged += _navigationService_OnPageChanged;
-            hookService.OnKeyPressed += HookService_OnKeyPressed;
-            Scan();
+            //Scan();
         }
 
         private void _navigationService_OnPageChanged(Page page) => CurrentPage = page;
@@ -48,22 +48,26 @@ namespace D2KeyHelper.Viewmodels
                     }
                 }
             };
-            NativeWin32.NativeWin32.SendInput(((uint)pInputs.Length),pInputs,NativeWin32Structs.INPUT.Size);
+            NativeWin32.NativeWin32.SendInput(((uint)pInputs.Length), pInputs, NativeWin32Structs.INPUT.Size);
         }
 
-        public Process Scan()
-        {
-            var d2Proc = Process.GetProcessesByName("D2R");
-            if (d2Proc.Length == 0) { D2ProcStatus = "Not Founed D2Process"; return null; }
-            D2ProcStatus = $"OK! Name-{d2Proc[0].ProcessName}/Id-{d2Proc[0].Id}";
-            return d2Proc[0];
-        }
+        //public Process Scan()
+        //{
+        //    var d2Proc = Process.GetProcessesByName("D2R");
+        //    if (d2Proc.Length == 0) { D2ProcStatus = "Not Founed D2Process"; return null; }
+        //    D2ProcStatus = $"OK! Name-{d2Proc[0].ProcessName}/Id-{d2Proc[0].Id}";
+        //    return d2Proc[0];
+        //}
 
         public ICommand StartLIstener => new DelegateCommand(() =>
         {
             var proc = Process.Start("notepad.exe");
             hookService.SetHook(proc);
         });
-        public ICommand OpenKeyBindingPage => new DelegateCommand(()=> { });
+        public ICommand OpenKeyBindingPage => new DelegateCommand(() =>
+        {
+            navigationService.Navigate(new KeyBindingPage());
+        });
+       
     }
 }

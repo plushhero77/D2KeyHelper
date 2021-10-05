@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace D2KeyHelper.Services
 {
-    public class PageNavigationService
+    public class PageNavigationService :Page
     {
         public event Action<Page> OnPageChanged;
         public void Navigate(Page page) => OnPageChanged?.Invoke(page);

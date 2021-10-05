@@ -23,7 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\NativeWIn32.dll.csproj" />
+    <ProjectReference Include="..\ClassLibrary1\NativeWin32.dll.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="src\" />
   </ItemGroup>
 
 </Project>

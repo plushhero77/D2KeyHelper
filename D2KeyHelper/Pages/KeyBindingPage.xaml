@@ -4,11 +4,29 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:D2KeyHelper.Pages"
+      DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="KeyBindingPage">
 
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ItemsControl Grid.Column="0" ItemsSource="{Binding ConsoleKeys}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <Label Width="auto" Content="{Binding Key}"/>
+                        <TextBox IsEnabled="False" TextAlignment="Center" Text="{Binding Value, Mode=OneWay}" Width="100px"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Grid.Column="1">
+            <RadioButton IsChecked="True" GroupName="KeyEventGroup" Content="Use KeyUp event" Command="{Binding SetWParamToKeyUpEvent}" CommandParameter="WM_KEYUP"/>
+            <RadioButton GroupName="KeyEventGroup" Content="Use KeyDown event" Command="{Binding SetWParamToKeyUpEvent}" CommandParameter="WM_KEYDOWN"/>
+        </StackPanel>
     </Grid>
 </Page>

@@ -16,10 +16,10 @@
             <Label HorizontalAlignment="Left" FontSize="18" Content="{Binding D2ProcStatus}"/>
             <StackPanel Orientation="Horizontal">
                 <Button Margin="10" VerticalAlignment="Top" Height="30" Content="Start KeyHelper" Command="{Binding StartLIstener}"/>
-                <Button Margin="10" VerticalAlignment="Top" Height="30" Content="Key Binding Set" Command="{Binding StartLIstener}"/>
+                <Button Margin="10" VerticalAlignment="Top" Height="30" Content="Key Binding Set" Command="{Binding OpenKeyBindingPage}"/>
             </StackPanel>
         </StackPanel>
-        <Frame Grid.Row="1" NavigationUIVisibility="Hidden" Content="{}"/>
+        <Frame Grid.Row="1" NavigationUIVisibility="Hidden" Content="{Binding CurrentPage}"/>
 
 
     </Grid>

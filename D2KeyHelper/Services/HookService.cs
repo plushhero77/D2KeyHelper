@@ -15,36 +15,46 @@ namespace D2KeyHelper.Services
 {
     public class HookService
     {
-        public event Action<IntPtr> OnKeyPressed;
-
-        private NativeWin32.NativeWin32.HookProc hookProc = null;
+        private NativeWin32.NativeWin32.HookProc hookProc;
         private IntPtr hHook;
         private int processId;
-        private IntPtr hInstance;
         public NativeWin32Enums.WM_WPARAM WM_WPARAM { get; set; }
 
         public HookService()
         {
             this.hookProc = new NativeWin32.NativeWin32.HookProc(this.HookCallback);
+            WM_WPARAM = NativeWin32Enums.WM_WPARAM.WM_KEYDOWN;
         }
 
         private int HookCallback(int code, IntPtr wParam, IntPtr lParam)
         {
 
-            if (code < 0)
-            {
-                return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
-            }
+            if (code < 0) { return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam); }
 
             NativeWin32.NativeWin32.GetWindowThreadProcessId(NativeWin32.NativeWin32.GetForegroundWindow(), out int pid);
 
-            if (pid == processId)
+            if (pid == processId && ((int)WM_WPARAM) == wParam.ToInt32())
             {
-                if (wParam.ToInt32() == (int)WM_WPARAM)
+                var pInputs = new[]
                 {
-                    OnKeyPressed?.Invoke(lParam);
+                new NativeWin32Structs.INPUT()
+                {
+                    type = ((uint)NativeWin32Enums.INPUT_TYPE.INPUT_KEYBOARD),
+                    U = new NativeWin32Structs.InputUnion()
+                    {
+                        ki = new NativeWin32Structs.KEYBDINPUT
+                        {
+                            wScan =  NativeWin32Enums.ScanCodeShort.KEY_Z,
+                            wVk = NativeWin32Enums.VirtualKeyShort.KEY_Z
+                        }
+                    }
                 }
+            };
+                NativeWin32.NativeWin32.SendInput(((uint)pInputs.Length), pInputs, NativeWin32Structs.INPUT.Size);
             }
+
+
+
 
             return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }

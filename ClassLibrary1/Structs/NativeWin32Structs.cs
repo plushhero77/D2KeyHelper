@@ -9,10 +9,7 @@ namespace NativeWin32.Structs
     {
         public uint type;
         public InputUnion U;
-        public static int Size
-        {
-            get { return Marshal.SizeOf(typeof(INPUT)); }
-        }
+        public static int Size => Marshal.SizeOf(typeof(INPUT));
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -31,7 +28,7 @@ namespace NativeWin32.Structs
         internal int dx;
         internal int dy;
         internal int mouseData;
-        internal MOUSEEVENTF dwFlags;
+        public MOUSEEVENTF dwFlags;
         internal uint time;
         internal UIntPtr dwExtraInfo;
     }

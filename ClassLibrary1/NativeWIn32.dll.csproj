@@ -7,8 +7,8 @@
     <ProjectGuid>{E6972F70-0A7A-457B-9CEA-B90CC3DD5361}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClassLibrary1</RootNamespace>
-    <AssemblyName>ClassLibrary1</AssemblyName>
+    <RootNamespace>NativeWin32</RootNamespace>
+    <AssemblyName>NativeWin32</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

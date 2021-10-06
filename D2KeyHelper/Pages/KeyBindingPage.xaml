@@ -30,18 +30,12 @@
                 <DataTemplate>
                     <StackPanel  Tag="{Binding Key}" Orientation="Horizontal" Margin="2,2,0,2">
                         <Label MinWidth="120px" Content="{Binding Key}"/>
-                        <ComboBox ItemsSource="{Binding Keys}" SelectedItem="{Binding Key}" DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}"/>
-                        <TextBox  IsEnabled="False" Text="{Binding Value,Mode=OneWay}" TextAlignment="Center" MinWidth="100px"/>
-                        <TextBox  IsEnabled="False" Text="{Binding Event,Mode=OneWay}" TextAlignment="Center" MinWidth="100px"/>
-                        <Button Margin="2,0,0,0" Content="Edit" DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}" Command="{Binding EditBinding}" CommandParameter="{Binding Tag,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=StackPanel}}"/>
-                        <Button Margin="2,0,0,0" Content="Delete" DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}" Command="{Binding DeleteBinding}" CommandParameter="{Binding Tag,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=StackPanel}}"/>
+                        <ComboBox SelectedItem="{Binding Value}" ItemsSource="{Binding Source={StaticResource  VMLocator},Path=KeyBindingPageVM.Keys,Mode=OneWay}"/>
+                        <ComboBox SelectedItem="{Binding Event}" ItemsSource="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM.Events}"/>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <StackPanel Grid.Column="1">
-            <RadioButton IsChecked="True" GroupName="KeyEventGroup" Content="Use KeyUp event" Command="{Binding SetWParamToKeyUpEvent}" CommandParameter="WM_KEYUP"/>
-            <RadioButton GroupName="KeyEventGroup" Content="Use KeyDown event" Command="{Binding SetWParamToKeyUpEvent}" CommandParameter="WM_KEYDOWN"/>
-        </StackPanel>
+        <Border Grid.Column="1" Background="Azure"/>
     </Grid>
 </Page>

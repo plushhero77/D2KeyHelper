@@ -13,26 +13,34 @@ namespace D2KeyHelper.Viewmodels.KeyBinding
     public class KeyBindingPageVM : BindableBase
     {
         public HookService HookService { get; }
-        public string[] MyProperty { get; set; }
+        public string[] Keys { get
+            {
+              return  Enum.GetNames(typeof(VirtualKeyShort));
+            } 
+        }
+        public string[] Events { get
+            {
+                return Enum.GetNames(typeof(WM_WPARAM));
+            } }
 
         public KeyBindingPageVM(HookService _hookService)
         {
             HookService = _hookService;
-            MyProperty = Enum.GetNames<VirtualKeyShort>();
         }
         
-        public ICommand SetKeyBinding => new DelegateCommand<EBindedKeys>(obj => {
-            
+        public ICommand EditBinding => new DelegateCommand<string>(key => {
+            HookService.EditKeyBinding(key, VirtualKeyShort.F1);
+        });
+        public ICommand DeleteBinding => new DelegateCommand<string>(key => {
+            HookService.DeleteKeyBinding(key);
         });
 
-        public ICommand FindKey => new DelegateCommand(()=> {
-            
+        public ICommand AddBinding => new DelegateCommand<string>(key => {
+            HookService.AddKeyBinding("test", VirtualKeyShort.F1);
         });
-        public ICommand SetWParamToKeyUpEvent => new DelegateCommand<object>(obj =>
+        public ICommand SetWParam => new DelegateCommand<object>(obj =>
         {
-            var wParam = Enum.Parse(typeof(WM_WPARAM), obj.ToString());
-            HookService.WM_WPARAM = (WM_WPARAM)wParam;
-            MessageBox.Show(HookService.WM_WPARAM.ToString());
+
         });
     }
 }

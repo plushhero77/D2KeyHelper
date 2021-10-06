@@ -1,7 +1,11 @@
-﻿using D2KeyHelper.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows;
 using NativeWin32.Enums;
 using NativeWin32.Structs;
 
@@ -12,25 +16,17 @@ namespace D2KeyHelper.Services
         private NativeWin32.NativeWin32.HookProc hookProc;
         private IntPtr hHook;
         private int processId;
-        public Dictionary<EBindedKeys, VirtualKeyShort> BindedKeys { get; }
-        public WM_WPARAM WM_WPARAM { get; set; }
-
+        public ObservableCollection<BindingKey> BindingKeyCollection { get; }
         public HookService()
         {
             this.hookProc = new NativeWin32.NativeWin32.HookProc(this.HookCallback);
-            WM_WPARAM = WM_WPARAM.WM_KEYDOWN;
-            BindedKeys = new Dictionary<EBindedKeys, VirtualKeyShort>();
+            BindingKeyCollection = new ObservableCollection<BindingKey>();
             BindedKeys_Init();
         }
 
-        private void BindedKeys_Init()
+        private void BindedKeys_Init() // Заменить на Профиль
         {
-            var keys = Enum.GetNames(typeof(EBindedKeys));
-
-            for (int i = 0; i < keys.Length; i++)
-            {
-                BindedKeys.Add(Enum.Parse<EBindedKeys>(keys[i]), Enum.Parse<VirtualKeyShort>(Enum.GetName(typeof(VirtualKeyShort), 0x70 + i))); 
-            }
+            BindingKeyCollection.Add(new BindingKey("key", VirtualKeyShort.F3, WM_WPARAM.WM_KEYUP));
         }
 
 
@@ -40,26 +36,33 @@ namespace D2KeyHelper.Services
 
             if (code < 0) { return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam); }
 
-            NativeWin32.NativeWin32.GetWindowThreadProcessId(NativeWin32.NativeWin32.GetForegroundWindow(), out int pid);
+           NativeWin32.NativeWin32.GetWindowThreadProcessId(NativeWin32.NativeWin32.GetForegroundWindow(), out int pid);
 
-            if (pid == processId && ((int)WM_WPARAM) == wParam.ToInt32())
+            if (pid == processId)
             {
-                var pInputs = new[]
+                var wVk = Marshal.PtrToStructure<KEYBDINPUT>(lParam).wVk;
+                var binding = BindingKeyCollection.Where(x => x.Value == wVk).ToArray();
+
+                if (binding.Length > 0 && ((int)binding[0].Event) == wParam.ToInt32())
                 {
-                new INPUT()
-                {
-                    type = ((uint)INPUT_TYPE.INPUT_KEYBOARD),
-                    U = new InputUnion()
+                    var pInputs = new[]
                     {
-                        ki = new KEYBDINPUT
+                        new INPUT()
                         {
-                            wScan =  ScanCodeShort.KEY_Z,
-                            wVk = VirtualKeyShort.KEY_Z
-                        }
-                    }
+                            type = (uint)INPUT_TYPE.INPUT_KEYBOARD,
+                            U = new InputUnion()
+                            {
+                                ki = new KEYBDINPUT
+                                {
+                                    wScan = ScanCodeShort.KEY_Z,
+                                    wVk = VirtualKeyShort.KEY_Z
+                                }
+                            }
+                        }                   
+                    };
+                    //Thread.Sleep(400);
+                    NativeWin32.NativeWin32.SendInput(((uint)pInputs.Length), pInputs, INPUT.Size);
                 }
-            };
-                NativeWin32.NativeWin32.SendInput(((uint)pInputs.Length), pInputs, INPUT.Size);
             }
 
 
@@ -67,37 +70,43 @@ namespace D2KeyHelper.Services
 
             return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
+
         public bool SetHook(Process process)
         {
             processId = process.Id;
             var hInstance = System.Runtime.InteropServices.Marshal.GetHINSTANCE(typeof(Process).Module);
-            hHook = NativeWin32.NativeWin32.SetWindowsHookEx((int)eHookType.WH_KEYBOARD_LL, hookProc, hInstance, 0);
+            hHook = NativeWin32.NativeWin32.SetWindowsHookEx((int)HookType.WH_KEYBOARD_LL, hookProc, hInstance, 0);
             if (hHook.ToInt32() == 0) { return false; }
 
             return true;
         }
         public bool DeleteHook() => NativeWin32.NativeWin32.UnhookWindowsHookEx(hHook) ? true : false;
-        public void SetKeyBinding (EBindedKeys key,VirtualKeyShort value)
+        public void EditKeyBinding(string key, VirtualKeyShort value)
         {
-            BindedKeys[key] = value;
+            BindingKeyCollection.FirstOrDefault(x => x.Key == key).Value = value;
         }
+
+        public void AddKeyBinding(string key, VirtualKeyShort value)
+        {
+            BindingKeyCollection.Add(new BindingKey(key, VirtualKeyShort.KEY_Z, WM_WPARAM.WM_KEYDOWN));
+        }
+        public void DeleteKeyBinding(string key)
+        {
+            BindingKeyCollection.Remove(BindingKeyCollection.FirstOrDefault(x => x.Key == key));
+        }
+
     }
-
-    public enum EBindedKeys
+    public class BindingKey
     {
-        UserKey_1,
-        UserKey_2,
-        UserKey_3,
-        UserKey_4,
-        UserKey_5,
-        UserKey_6,
-        UserKey_7,
-        UserKey_8,
-        UserKey_9,
-        UserKey_10,
+        public BindingKey(string _key, VirtualKeyShort _value, WM_WPARAM _event = WM_WPARAM.WM_KEYUP)
+        {
+            Key = _key;
+            Value = _value;
+            Event = _event;
+        }
 
-
-
+        public string Key { get; set; }
+        public VirtualKeyShort Value { get; set; }
+        public WM_WPARAM Event { get; set; }
     }
 }
-

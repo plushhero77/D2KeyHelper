@@ -3,24 +3,38 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:D2KeyHelper.Pages"
       DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="KeyBindingPage">
+    <Page.Resources>
+        <CollectionViewSource x:Key="sourse" Source="{Binding HookService.BindingKeyCollection}"/>
+        <CompositeCollection x:Key="compCol">
+            <CollectionContainer Collection="{Binding Source={StaticResource sourse}}"/>
+            <Button Content="+++" Command="{Binding AddBinding}" HorizontalAlignment="Center" MinHeight="{Binding ActualWidth,RelativeSource={RelativeSource Self}}"/>
+        </CompositeCollection>
+    </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ItemsControl Grid.Column="0" ItemsSource="{Binding HookService.BindedKeys}">
+        <ItemsControl Grid.Column="0" ItemsSource="{Binding Source={StaticResource compCol}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Margin="2" Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel  Tag="{Binding Key}" Orientation="Horizontal" Margin="2">
+                    <StackPanel  Tag="{Binding Key}" Orientation="Horizontal" Margin="2,2,0,2">
                         <Label MinWidth="120px" Content="{Binding Key}"/>
-                        <TextBox  IsEnabled="False" TextAlignment="Center" Text="{Binding Value, Mode=OneWay}" MinWidth="100px"/>
-                        <Button  Tag="" Margin="2,0,0,0" Content="Set Key" DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}" Command="{Binding SetKeyBinding}" CommandParameter="{Binding Path=Tag,RelativeSource={RelativeSource AncestorLevel=1 ,AncestorType=StackPanel}}"/>
+                        <ComboBox ItemsSource="{Binding Keys}" SelectedItem="{Binding Key}" DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}"/>
+                        <TextBox  IsEnabled="False" Text="{Binding Value,Mode=OneWay}" TextAlignment="Center" MinWidth="100px"/>
+                        <TextBox  IsEnabled="False" Text="{Binding Event,Mode=OneWay}" TextAlignment="Center" MinWidth="100px"/>
+                        <Button Margin="2,0,0,0" Content="Edit" DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}" Command="{Binding EditBinding}" CommandParameter="{Binding Tag,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=StackPanel}}"/>
+                        <Button Margin="2,0,0,0" Content="Delete" DataContext="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM}" Command="{Binding DeleteBinding}" CommandParameter="{Binding Tag,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=StackPanel}}"/>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

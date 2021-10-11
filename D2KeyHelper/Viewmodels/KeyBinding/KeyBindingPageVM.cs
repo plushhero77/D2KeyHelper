@@ -4,28 +4,32 @@ using System;
 using NativeWin32.Enums;
 using System.Windows.Input;
 using System.Linq;
+using D2KeyHelper.src;
+using System.Diagnostics;
 
 namespace D2KeyHelper.Viewmodels.KeyBinding
 {
     public class KeyBindingPageVM : BindableBase
     {
+        public ProfileService ProfileService { get; }
 
-        public HookService HookService { get; }
         public static string[] Keys => Enum.GetNames(typeof(VirtualKeyShort));
         public static string[] Events => Enum.GetNames(typeof(WM_WPARAM));
 
-        public KeyBindingPageVM(HookService _hookService)
+        public KeyBindingPageVM(ProfileService _profileService)
         {
-            HookService = _hookService;
+            ProfileService = _profileService;
         }
 
         public ICommand DeleteBinding => new DelegateCommand<string>(key =>
         {
-            HookService.BindingKeyCollection.Remove(HookService.BindingKeyCollection.Where(x => x.Key == key).FirstOrDefault());
+            BindingKey keyBinding = ProfileService.CurrentProfile.BindingKeysCollection.FirstOrDefault(x => x.Key == key);
+            if (keyBinding != null) { _ = ProfileService.CurrentProfile.BindingKeysCollection.Remove(keyBinding); }
+            else { Trace.WriteLine("Delete error"); }
         });
         public ICommand AddBinding => new DelegateCommand<string>(key =>
         {
-            HookService.BindingKeyCollection.Add(new BindingKey(key));
+            ProfileService.CurrentProfile.BindingKeysCollection.Add(new BindingKey(key));
         });
     }
 }

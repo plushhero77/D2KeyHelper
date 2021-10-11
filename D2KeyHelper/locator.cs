@@ -10,7 +10,7 @@ namespace D2KeyHelper
 {
     public class locator
     {
-        public mainVM mainVM => Ioc.Resolve<mainVM>();
+        public MainVM mainVM => Ioc.Resolve<MainVM>();
         public KeyBindingPageVM KeyBindingPageVM => Ioc.Resolve<KeyBindingPageVM>();
     }
 }

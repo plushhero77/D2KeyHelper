@@ -13,10 +13,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
+            <Label Content="{Binding ProfileService.CurrentProfile.Name}"/>
+            <ComboBox ItemsSource="{Binding ProfileService.ProfileList}" DisplayMemberPath="Name" SelectedItem="{Binding ProfileService.CurrentProfile, Mode=TwoWay}"/>
             <Label HorizontalAlignment="Left" FontSize="18" Content="{Binding HookService.IsHookSet}"/>
-            <StackPanel Orientation="Horizontal">
-                <Button Margin="10" VerticalAlignment="Top" Height="30" Content="Start KeyHelper" Command="{Binding SetHook}"/>
-                <Button Margin="10" VerticalAlignment="Top" Height="30" Content="Key Binding Set" Command="{Binding OpenKeyBindingPage}"/>
+            <StackPanel Orientation="Horizontal" >
+                <Button Margin="10" VerticalAlignment="Top"  Content="Start KeyHelper" Command="{Binding SetHook}"/>
+                <Button Margin="10" VerticalAlignment="Top"  Content="Key Binding Set" Command="{Binding OpenKeyBindingPage}"/>
             </StackPanel>
         </StackPanel>
         <Frame Grid.Row="1" NavigationUIVisibility="Hidden" Content="{Binding CurrentPage}"/>

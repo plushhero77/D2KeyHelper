@@ -18,11 +18,12 @@ namespace D2KeyHelper
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<mainVM>();
+            services.AddSingleton<MainVM>();
             services.AddSingleton<KeyBindingPageVM>();
 
 
             services.AddSingleton<HookService>();
+            services.AddSingleton<ProfileService>();
             services.AddTransient<PageNavigationService>();
 
             _provider = services.BuildServiceProvider();

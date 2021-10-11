@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="KeyBindingPage">
     <Page.Resources>
-        <CollectionViewSource x:Key="sourse" Source="{Binding HookService.BindingKeyCollection}"/>
+        <CollectionViewSource x:Key="sourse" Source="{Binding ProfileService.CurrentProfile.BindingKeysCollection}"/>
         <CompositeCollection x:Key="compCol">
             <CollectionContainer Collection="{Binding Source={StaticResource sourse}}"/>
             <Button Content="+++" Command="{Binding AddBinding}" HorizontalAlignment="Center" MinHeight="{Binding ActualWidth,RelativeSource={RelativeSource Self}}"/>
@@ -31,11 +31,11 @@
                     <StackPanel  Tag="{Binding Key}" Orientation="Horizontal" Margin="2,2,0,2">
                         <Label MinWidth="120px" Content="{Binding Key}"/>
                         <ComboBox SelectedItem="{Binding Value}" ItemsSource="{Binding Source={StaticResource  VMLocator},Path=KeyBindingPageVM.Keys,Mode=OneWay}"/>
-                        <ComboBox SelectedItem="{Binding Event}" ItemsSource="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM.Events}"/>
+                        <ComboBox SelectedItem="{Binding EventParam}" ItemsSource="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM.Events}"/>
+                        <Button Content="-" Command="{Binding Source={StaticResource VMLocator},Path=KeyBindingPageVM.DeleteBinding}" CommandParameter="{Binding Tag,RelativeSource={RelativeSource  AncestorLevel=1 ,AncestorType=StackPanel}}"/>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Border Grid.Column="1" Background="Azure"/>
     </Grid>
 </Page>

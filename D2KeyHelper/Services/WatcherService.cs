@@ -9,14 +9,9 @@ using System.Windows.Threading;
 
 namespace D2KeyHelper.Services
 {
-#warning WatcherService not implemented
-#pragma warning disable
     public class WatcherService
     {
-        public WatcherService()
-        {
 
-        }
         public Process GameProcess { get; private set; }
         public int Timeout { get; set; }
         public bool UseWatcher { get; set; }

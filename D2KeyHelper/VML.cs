@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace D2KeyHelper
 {
-    public class locator
+    public class VML
     {
         public MainVM mainVM => Ioc.Resolve<MainVM>();
         public KeyBindingPageVM KeyBindingPageVM => Ioc.Resolve<KeyBindingPageVM>();

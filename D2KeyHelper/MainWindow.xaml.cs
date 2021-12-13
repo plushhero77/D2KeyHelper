@@ -1,4 +1,5 @@
-﻿using System;
+﻿using D2KeyHelper.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +25,6 @@ namespace D2KeyHelper
         {
             InitializeComponent();
         }
+
     }
 }

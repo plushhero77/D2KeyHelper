@@ -12,16 +12,20 @@ namespace D2KeyHelper.Viewmodels
 {
     public class MainVM : BindableBase
     {
-        public string D2ExeFilePath { get; set; }
         public Process D2RProcess { get; set; }
+        public SettingsService SettingsService { get; }
+        public ProfileService ProfileService { get; }
+        public string[] ProfilesNames { get; set; }
 
-        public MainVM()
+        public MainVM(SettingsService settingsService,ProfileService profileService)
         {
             Initialize();
             StartProcWather();
+            SettingsService = settingsService;
+            ProfileService = profileService;
         }
 
-        public DelegateCommand OpenFileDialog => new DelegateCommand(() =>
+        public DelegateCommand OpenFileDialog => new(() =>
         {
             OpenFileDialog fdiag = new();
             fdiag.Filter = "Executable File (*.exe)|*.exe";
@@ -29,13 +33,22 @@ namespace D2KeyHelper.Viewmodels
 
             if (fdiag.ShowDialog() == true)
             {
-                D2ExeFilePath = fdiag.FileName;
+                SettingsService.Settings.ExeFilePath = fdiag.FileName;
             }
         });
-        public DelegateCommand RunD2Process => new DelegateCommand(() =>
+        public DelegateCommand RunD2Process => new(() =>
+       {
+           Process.Start(SettingsService.Settings.ExeFilePath);
+       });
+        public DelegateCommand test => new(() =>
         {
-            Process.Start(D2ExeFilePath);
+
         });
+        public DelegateCommand AddProfile => new(() =>
+        {
+            ProfileService.Add(new src.Profile());
+        });
+
 
         private void Initialize()
         {

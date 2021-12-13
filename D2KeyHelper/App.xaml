@@ -7,5 +7,6 @@
     <Application.Resources>
         <local:VML x:Key="VML"/>
         <converters:ProcToFormatConverter x:Key="D2ProcConv"/>
+        <converters:KeyUpDownEventConverter x:Key="KeyUpDownConverter"/>
     </Application.Resources>
 </Application>

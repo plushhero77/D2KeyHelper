@@ -1,83 +1,65 @@
 ﻿using D2KeyHelper.src;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.Json;
-using System.Windows;
+using System.Threading.Tasks;
 
 namespace D2KeyHelper.Services
 {
-    public class ProfileService
+    public class ProfileService : INotifyPropertyChanged
     {
-        private CharactreProfile currentProfile;
-        private readonly string pathToProfFolder = Path.Combine(Directory.GetCurrentDirectory(), "Profiles");
+        public ObservableCollection<Profile> Profiles { get; private set; } = new();
+        public Profile CurrentProfile { get; set; }
+
+        private readonly string profDir = Path.Combine(Directory.GetCurrentDirectory(), "Profiles");
+        private readonly string ext = ".profile";
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ProfileService()
         {
-            ProfileList = new List<CharactreProfile>();
-            InitProfileList();
+            Initialization();
         }
 
-        public CharactreProfile CurrentProfile
+        private void Initialization()
         {
-            get => currentProfile;
-            set
+            CurrentProfile.PropertyChanged += new PropertyChangedEventHandler(delegate (object sender, PropertyChangedEventArgs e) { Add(CurrentProfile); });
+
+            if (!Directory.Exists(profDir)) { _ = Directory.CreateDirectory(profDir); return; }
+
+            string[] profiles = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "Profiles"));
+
+            if (profiles.Length > 0)
             {
-                ConfigurationManager.AppSettings.Set("currentProfile", value.Name);
-                if (currentProfile != null)
+                foreach (var profile in profiles)
                 {
-                    currentProfile.OnProfileChanged -= Value_OnProfileChanged;
-                }
-                currentProfile = value;
-                currentProfile.OnProfileChanged += Value_OnProfileChanged;
-            }
-        }
-        public List<CharactreProfile> ProfileList { get; }
-        public string PathToProfileFolder { get; set; }
-
-#warning Убрать множественный вызов
-        private void Value_OnProfileChanged()
-        {
-            string json = JsonSerializer.Serialize(currentProfile);
-            using StreamWriter sw = File.CreateText(Path.Combine(pathToProfFolder, currentProfile.Name));
-            sw.Write(json);
-            sw.Close();
-        }
-        private bool InitProfileList()
-        {
-            string curProfName = ConfigurationManager.AppSettings.Get("currentProfile");
-            Debug.WriteLine($"{currentProfile}");
-
-            if (!Directory.Exists(pathToProfFolder)) { _ = Directory.CreateDirectory(pathToProfFolder); }
-
-            foreach (string item in Directory.GetFiles(pathToProfFolder))
-            {
-                try
-                {
-                    string json = File.ReadAllText(Path.Combine(pathToProfFolder, item));
-                    CharactreProfile profile = JsonSerializer.Deserialize<CharactreProfile>(json);
-                    if (profile.Name == curProfName) { CurrentProfile = profile; }
-                    ProfileList.Add(profile);
-                }
-                catch (JsonException ex)
-                {
-                    _ = MessageBox.Show(ex.Message, "Read profile Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    return false;
+                    byte[] bytes = File.ReadAllBytes(profile);
+                    Profiles.Add(JsonSerializer.Deserialize<Profile>(bytes));
                 }
             }
+        }
 
-            if (currentProfile == null)
-            {
-                CurrentProfile = new CharactreProfile();
-                ProfileList.Add(CurrentProfile);
-            }
 
-            return true;
+        public void Add(Profile profile)
+        {
+            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(profile);
+            string path = Path.Combine(profDir, profile.Name + ext);
+            File.WriteAllBytesAsync(path, bytes);
+        }
+        //public async void AddAsync(Profile profile) => await Task.Run(() => { Add(profile); });
+        public void Delete(Profile profile)
+        {
+            var path = Path.Combine(profDir, profile.Name, ext);
+
+            if (File.Exists(path)) { File.Delete(path); }
 
         }
+        //public async void DeleteAsync(Profile profile) => await Task.Run(() => { Delete(profile); });
+
     }
 }

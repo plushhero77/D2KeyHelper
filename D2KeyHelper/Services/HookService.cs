@@ -18,11 +18,11 @@ namespace D2KeyHelper.Services
         private readonly NativeWin32.NativeWin32.HookProc hookProc;
         private IntPtr hHook = IntPtr.Zero;
         private int gameProcessId;
-        private readonly ProfileService profileService;
+        private readonly oldProfileService profileService;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public HookService(ProfileService _profileService)
+        public HookService(oldProfileService _profileService)
         {
             profileService = _profileService;
             hookProc = new NativeWin32.NativeWin32.HookProc(HookCallback);

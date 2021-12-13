@@ -11,12 +11,12 @@ namespace D2KeyHelper.Viewmodels.KeyBinding
 {
     public class KeyBindingPageVM : BindableBase
     {
-        public ProfileService ProfileService { get; }
+        public oldProfileService ProfileService { get; }
 
         public static string[] Keys => Enum.GetNames(typeof(VirtualKeyShort));
         public static string[] Events => Enum.GetNames(typeof(WM_WPARAM));
 
-        public KeyBindingPageVM(ProfileService _profileService)
+        public KeyBindingPageVM(oldProfileService _profileService)
         {
             ProfileService = _profileService;
         }

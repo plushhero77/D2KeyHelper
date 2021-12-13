@@ -13,5 +13,6 @@ namespace D2KeyHelper
     /// </summary>
     public partial class App : Application
     {
+
     }
 }

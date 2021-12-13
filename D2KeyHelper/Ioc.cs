@@ -23,8 +23,8 @@ namespace D2KeyHelper
 
 
             services.AddSingleton<HookService>();
-            //services.AddSingleton<ProfileService>();
-
+            services.AddSingleton<ProfileService>();
+            services.AddSingleton<SettingsService>();
             _provider = services.BuildServiceProvider();
         }
 

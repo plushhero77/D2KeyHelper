@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:D2KeyHelper"
         mc:Ignorable="d"
-        DataContext="{Binding Source={StaticResource VML},Path=mainVM}"
+        DataContext="{Binding Source={StaticResource VML},Path=MainVM}"
         Title="MainWindow" MinHeight="450" MinWidth="500" Width="500" Height="450">
     <Grid>
         <Grid.RowDefinitions>
@@ -39,7 +39,7 @@
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                         <Label  Content="Hoock stat:"/>
                         <Label  Content="status"/>
-                        <Button Command="{Binding test}" Margin="3,0,0,0" Content="set hock"/>
+                        <Button Margin="3,0,0,0" Content="set hock"/>
                         <Button Margin="3,0,0,0" Content="Unset hook"/>
                     </StackPanel>
                 </Grid>
@@ -59,7 +59,7 @@
                     <ComboBox Grid.Column="0" ItemsSource="{Binding ProfileService.Profiles}"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Margin="3,0,0,0" Content="add" Command="{Binding AddProfile}"/>
-                        <Button Margin="3,0,0,0" Content="Edit"/>
+                        <Button Margin="3,0,0,0" Content="Edit" Command="{Binding EditProfile}"/>
                         <Button Margin="3,0,0,0" Content="delete"/>
                     </StackPanel>
                 </Grid>

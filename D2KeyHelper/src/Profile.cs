@@ -12,7 +12,7 @@ namespace D2KeyHelper.src
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Dictionary<string, NativeWin32.Enums.VirtualKeyShort> KeyBindingCollection { get; set; } = new();
+        public ObservableCollection<BindingPair> KeyBindingCollection { get; set; } = new();
         public string Name { get; set; } = "Defalut";
         public DateTime LastUpdateTime { get; set; } = DateTime.Now;
 

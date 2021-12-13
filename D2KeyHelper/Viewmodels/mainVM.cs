@@ -7,6 +7,7 @@ using System.Management;
 using System.Threading;
 using System;
 using System.Configuration;
+using System.Windows;
 
 namespace D2KeyHelper.Viewmodels
 {
@@ -17,7 +18,7 @@ namespace D2KeyHelper.Viewmodels
         public ProfileService ProfileService { get; }
         public string[] ProfilesNames { get; set; }
 
-        public MainVM(SettingsService settingsService,ProfileService profileService)
+        public MainVM(SettingsService settingsService, ProfileService profileService)
         {
             Initialize();
             StartProcWather();
@@ -40,15 +41,15 @@ namespace D2KeyHelper.Viewmodels
        {
            Process.Start(SettingsService.Settings.ExeFilePath);
        });
-        public DelegateCommand test => new(() =>
-        {
-
-        });
         public DelegateCommand AddProfile => new(() =>
         {
-            ProfileService.Add(new src.Profile());
+            new EditProfileWindow().ShowDialog();
         });
 
+        public DelegateCommand EditProfile => new(() =>
+        {
+            new EditProfileWindow().ShowDialog();
+        });
 
         private void Initialize()
         {

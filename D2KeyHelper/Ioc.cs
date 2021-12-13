@@ -1,12 +1,13 @@
 ﻿using D2KeyHelper.Services;
 using D2KeyHelper.Viewmodels;
-using D2KeyHelper.Viewmodels.KeyBinding;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+#pragma warning disable IDE0058,IDE0022
 
 namespace D2KeyHelper
 {
@@ -16,10 +17,10 @@ namespace D2KeyHelper
 
         static Ioc()
         {
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
 
             services.AddSingleton<MainVM>();
-            //services.AddSingleton<KeyBindingPageVM>();
+            services.AddTransient<EditProfileVM>();
 
 
             services.AddSingleton<HookService>();

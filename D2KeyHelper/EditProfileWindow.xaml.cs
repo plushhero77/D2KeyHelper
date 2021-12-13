@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace D2KeyHelper.Pages
+namespace D2KeyHelper
 {
     /// <summary>
-    /// Interaction logic for KeyBindingPage.xaml
+    /// Interaction logic for EditProfileWindow.xaml
     /// </summary>
-    public partial class KeyBindingPage : Page
+    public partial class EditProfileWindow : Window
     {
-        public KeyBindingPage()
+        public EditProfileWindow()
         {
             InitializeComponent();
         }

@@ -1,5 +1,4 @@
 ﻿using D2KeyHelper.Viewmodels;
-using D2KeyHelper.Viewmodels.KeyBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ namespace D2KeyHelper
 {
     public class VML
     {
-        public MainVM mainVM => Ioc.Resolve<MainVM>();
-        public KeyBindingPageVM KeyBindingPageVM => Ioc.Resolve<KeyBindingPageVM>();
+        public MainVM MainVM => Ioc.Resolve<MainVM>();
+        public EditProfileVM EditProfileVM => Ioc.Resolve<EditProfileVM>();
     }
 }

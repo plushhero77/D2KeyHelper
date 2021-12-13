@@ -3,63 +3,104 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace D2KeyHelper.Services
 {
     public class ProfileService : INotifyPropertyChanged
     {
-        public ObservableCollection<Profile> Profiles { get; private set; } = new();
-        public Profile CurrentProfile { get; set; }
-
-        private readonly string profDir = Path.Combine(Directory.GetCurrentDirectory(), "Profiles");
-        private readonly string ext = ".profile";
-
+        private readonly string pathToProfDir = Path.Combine(Directory.GetCurrentDirectory(), "Profiles");
+#pragma warning disable CS0067
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS0067
+        public Dictionary<string, Profile> Profiles { get; set; }
+        public KeyValuePair<string, Profile> CurrentProfile { get; set; }
 
         public ProfileService()
         {
             Initialization();
+            InitProfListAsync();
         }
 
         private void Initialization()
         {
-            CurrentProfile.PropertyChanged += new PropertyChangedEventHandler(delegate (object sender, PropertyChangedEventArgs e) { Add(CurrentProfile); });
+            CurrentProfile = new();
+            //PropertyChanged += new PropertyChangedEventHandler(delegate (object sender, PropertyChangedEventArgs e)
+            //{
+            //    if (e.PropertyName == "CurrentProfile")
+            //    {
+            //        CurrentProfile.Value.LastUpdateTime = DateTime.Now;
 
-            if (!Directory.Exists(profDir)) { _ = Directory.CreateDirectory(profDir); return; }
-
-            string[] profiles = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "Profiles"));
-
-            if (profiles.Length > 0)
+            //        _ = Task.Run(() =>
+            //        {
+            //            try
+            //            {
+            //                byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(CurrentProfile.Value);
+            //                File.WriteAllBytes(CurrentProfile.Key, bytes);
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                Debug.WriteLine("initialization");
+            //                _ = MessageBox.Show(ex.Message , ex.HResult.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+            //            }
+            //        });
+            //    }
+            //});
+        }
+        private async void InitProfListAsync()
+        {
+            await Task.Run(() =>
             {
-                foreach (var profile in profiles)
+                try
                 {
-                    byte[] bytes = File.ReadAllBytes(profile);
-                    Profiles.Add(JsonSerializer.Deserialize<Profile>(bytes));
+                    if (!Directory.Exists(pathToProfDir))
+                    {
+                        _ = Directory.CreateDirectory(pathToProfDir);
+                        return;
+                    }
+
+                    string[] files = Directory.GetFiles(pathToProfDir);
+
+                    foreach (string file in files)
+                    {
+                        byte[] bytes = File.ReadAllBytes(file);
+                        Profiles.Add(file, JsonSerializer.Deserialize<Profile>(bytes));
+                    }
+
                 }
-            }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("InitProfListAsync");
+                    _ = MessageBox.Show(ex.Message, ex.HResult.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            });
         }
-
-
-        public void Add(Profile profile)
+        public async void SaveAsync(Profile profile)
         {
-            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(profile);
-            string path = Path.Combine(profDir, profile.Name + ext);
-            File.WriteAllBytesAsync(path, bytes);
+            await Task.Run(() =>
+            {
+                try
+                {
+                    string path = Path.Combine(pathToProfDir, profile.Name + ".profile");
+                    byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(profile);
+                    File.WriteAllBytes(path, bytes);
+                    //Check Dictionary
+                    Profiles.Add(path, profile);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("AddAsync");
+                    _ = MessageBox.Show(ex.Message, ex.HResult.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            });
         }
-        //public async void AddAsync(Profile profile) => await Task.Run(() => { Add(profile); });
-        public void Delete(Profile profile)
-        {
-            var path = Path.Combine(profDir, profile.Name, ext);
 
-            if (File.Exists(path)) { File.Delete(path); }
-
-        }
-        //public async void DeleteAsync(Profile profile) => await Task.Run(() => { Delete(profile); });
 
     }
 }

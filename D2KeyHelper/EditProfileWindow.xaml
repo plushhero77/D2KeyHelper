@@ -1,0 +1,64 @@
+﻿<Window x:Class="D2KeyHelper.EditProfileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:D2KeyHelper"
+        mc:Ignorable="d"
+        DataContext="{Binding Source={StaticResource VML},Path=EditProfileVM}"
+        Title="EditProfileWindow" Height="450" MinWidth="300" Width="300">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0">
+            <Label Content="Name :"/>
+            <TextBox Text="{Binding ProfileService.CurrentProfile.Value.Name}"/>
+        </DockPanel>
+        <GroupBox Grid.Row="1" Header="Key Binding">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ItemsControl Grid.Row="0" ItemsSource="{Binding ProfileService.CurrentProfile.Value.KeyBindingCollection}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="3,3,3,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Text="{Binding Name}"/>
+                                    <ComboBox Margin="1,0,0,0" Grid.Column="1" ItemsSource="{Binding Source={StaticResource VML},Path=EditProfileVM.CB_itemsCollection}" SelectedItem="{Binding KeyShort ,Converter={StaticResource EnumToStringConv}}"/>
+                                    <Button Margin="1,0,0,0" Grid.Column="3" Content="D"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel Grid.Row="1">
+                        <Label Visibility="Visible" Content="Status save"/>
+                        <Grid Margin="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Margin="3" Grid.Column="0" Content="add"/>
+                            <Button Margin="3" Grid.Column="1" Content="save"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </GroupBox>
+    </Grid>
+</Window>

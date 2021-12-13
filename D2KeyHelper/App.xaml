@@ -8,5 +8,6 @@
         <local:VML x:Key="VML"/>
         <converters:ProcToFormatConverter x:Key="D2ProcConv"/>
         <converters:KeyUpDownEventConverter x:Key="KeyUpDownConverter"/>
+        <converters:EnumToStringConverter x:Key="EnumToStringConv"/>
     </Application.Resources>
 </Application>

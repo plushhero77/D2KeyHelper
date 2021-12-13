@@ -13,6 +13,7 @@ namespace D2KeyHelper.Services
     public class SettingsService
     {
         public UserSettings Settings { get; private set; }
+        private readonly string pathToSettings = Path.Combine(Directory.GetCurrentDirectory(), "UserSettings.set");
 
         public SettingsService()
         {
@@ -22,9 +23,9 @@ namespace D2KeyHelper.Services
 
         private void Load()
         {
-            if (File.Exists("Settings"))
+            if (File.Exists(pathToSettings))
             {
-                var bytes = File.ReadAllBytes("settings");
+                var bytes = File.ReadAllBytes(pathToSettings);
                 Settings = JsonSerializer.Deserialize<UserSettings>(new ReadOnlySpan<byte>(bytes));
             }
             else
@@ -35,7 +36,7 @@ namespace D2KeyHelper.Services
         private void Save()
         {
             var bytes = JsonSerializer.SerializeToUtf8Bytes(Settings);
-            File.WriteAllBytesAsync("settings", bytes);
+            File.WriteAllBytes(pathToSettings, bytes);
 
         }
 

@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:D2KeyHelper"
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource VML},Path=MainVM}"
+        WindowStartupLocation="CenterScreen"
         Title="MainWindow" MinHeight="450" MinWidth="500" Width="500" Height="450">
     <Grid>
         <Grid.RowDefinitions>
@@ -56,7 +57,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox Grid.Column="0" ItemsSource="{Binding ProfileService.Profiles}"/>
+                    <ComboBox Grid.Column="0" SelectedItem="{Binding ProfileService.CurrentProfile}" ItemsSource="{Binding ProfileService.Profiles}"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Margin="3,0,0,0" Content="add" Command="{Binding AddProfile}"/>
                         <Button Margin="3,0,0,0" Content="Edit" Command="{Binding EditProfile}"/>

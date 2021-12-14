@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:D2KeyHelper"
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource VML},Path=EditProfileVM}"
+        WindowStartupLocation="CenterScreen"
         Title="EditProfileWindow" Height="450" MinWidth="300" Width="300">
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -14,7 +15,7 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0">
             <Label Content="Name :"/>
-            <TextBox Text="{Binding ProfileService.CurrentProfile.Value.Name}"/>
+            <TextBox Text="{Binding ProfileService.CurrentProfile.Name}"/>
         </DockPanel>
         <GroupBox Grid.Row="1" Header="Key Binding">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -24,7 +25,7 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
-                    <ItemsControl Grid.Row="0" ItemsSource="{Binding ProfileService.CurrentProfile.Value.KeyBindingCollection}">
+                    <ItemsControl Grid.Row="0" ItemsSource="{Binding ProfileService.CurrentProfile.KeyBindingCollection}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel/>
@@ -47,14 +48,14 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <StackPanel Grid.Row="1">
-                        <Label Visibility="Visible" Content="Status save"/>
+                        <Label Visibility="{Binding SaveStatus}" Content="Profile Saved"/>
                         <Grid Margin="3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button Margin="3" Grid.Column="0" Content="add"/>
-                            <Button Margin="3" Grid.Column="1" Content="save"/>
+                            <Button Margin="3" Grid.Column="0" Content="add" Command="{Binding AddBinding}"/>
+                            <Button Margin="3" Grid.Column="1" Content="save &amp; close" Command="{Binding SaveProfile}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorLevel=1,AncestorType=Window} }"/>
                         </Grid>
                     </StackPanel>
                 </Grid>

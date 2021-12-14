@@ -16,42 +16,29 @@ namespace D2KeyHelper.Services
     public class ProfileService : INotifyPropertyChanged
     {
         private readonly string pathToProfDir = Path.Combine(Directory.GetCurrentDirectory(), "Profiles");
-#pragma warning disable CS0067
-        public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore CS0067
-        public Dictionary<string, Profile> Profiles { get; set; }
-        public KeyValuePair<string, Profile> CurrentProfile { get; set; }
+        private readonly SettingsService settingsService;
 
-        public ProfileService()
+        public event PropertyChangedEventHandler PropertyChanged;
+        public ObservableCollection<Profile> Profiles { get; set; }
+        public Profile CurrentProfile { get; set; }
+
+        public ProfileService(SettingsService _settingsService)
         {
             Initialization();
             InitProfListAsync();
+            this.settingsService = _settingsService;
         }
 
         private void Initialization()
         {
-            CurrentProfile = new();
-            //PropertyChanged += new PropertyChangedEventHandler(delegate (object sender, PropertyChangedEventArgs e)
-            //{
-            //    if (e.PropertyName == "CurrentProfile")
-            //    {
-            //        CurrentProfile.Value.LastUpdateTime = DateTime.Now;
-
-            //        _ = Task.Run(() =>
-            //        {
-            //            try
-            //            {
-            //                byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(CurrentProfile.Value);
-            //                File.WriteAllBytes(CurrentProfile.Key, bytes);
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                Debug.WriteLine("initialization");
-            //                _ = MessageBox.Show(ex.Message , ex.HResult.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
-            //            }
-            //        });
-            //    }
-            //});
+            Profiles = new();
+            this.PropertyChanged += new PropertyChangedEventHandler(delegate (object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "CurrentProfile")
+                {
+                    settingsService.Settings.LastProfileName = CurrentProfile.Name;
+                }
+            });
         }
         private async void InitProfListAsync()
         {
@@ -62,16 +49,32 @@ namespace D2KeyHelper.Services
                     if (!Directory.Exists(pathToProfDir))
                     {
                         _ = Directory.CreateDirectory(pathToProfDir);
-                        return;
                     }
 
                     string[] files = Directory.GetFiles(pathToProfDir);
 
                     foreach (string file in files)
                     {
-                        byte[] bytes = File.ReadAllBytes(file);
-                        Profiles.Add(file, JsonSerializer.Deserialize<Profile>(bytes));
+                        var bytes = File.ReadAllBytes(file);
+                        var prof = JsonSerializer.Deserialize<Profile>(bytes);
+
+                        Profiles.Add(prof);
+                        if (prof.Name == settingsService.Settings.LastProfileName)
+                        {
+                            CurrentProfile = prof;
+                        }
                     }
+                    if (Profiles.Count == 0)
+                    {
+                        var profile = new Profile();
+                        Profiles.Add(profile);
+                        CurrentProfile = profile;
+                    }
+                    else if (CurrentProfile == null)
+                    {
+                        CurrentProfile = Profiles[0];
+                    }
+
 
                 }
                 catch (Exception ex)
@@ -90,8 +93,6 @@ namespace D2KeyHelper.Services
                     string path = Path.Combine(pathToProfDir, profile.Name + ".profile");
                     byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(profile);
                     File.WriteAllBytes(path, bytes);
-                    //Check Dictionary
-                    Profiles.Add(path, profile);
                 }
                 catch (Exception ex)
                 {

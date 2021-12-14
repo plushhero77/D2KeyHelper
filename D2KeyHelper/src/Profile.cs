@@ -16,5 +16,9 @@ namespace D2KeyHelper.src
         public string Name { get; set; } = "Defalut";
         public DateTime LastUpdateTime { get; set; } = DateTime.Now;
 
+        public override string ToString()
+        {
+            return this.Name;
+        }
     }
 }

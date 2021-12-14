@@ -8,11 +8,12 @@ namespace D2KeyHelper.src
 {
     public class BindingPair
     {
-        public BindingPair(string name,NativeWin32.Enums.VirtualKeyShort keyShort)
+        public BindingPair(string name)
         {
             Name = name;
-            KeyShort = keyShort;
+            KeyShort = NativeWin32.Enums.VirtualKeyShort.KEY_A;
         }
+
         public string Name { get; set; }
         public NativeWin32.Enums.VirtualKeyShort KeyShort { get; set; }
     }

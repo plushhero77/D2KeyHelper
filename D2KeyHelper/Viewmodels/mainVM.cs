@@ -8,6 +8,7 @@ using System.Threading;
 using System;
 using System.Configuration;
 using System.Windows;
+using D2KeyHelper.src;
 
 namespace D2KeyHelper.Viewmodels
 {
@@ -17,14 +18,6 @@ namespace D2KeyHelper.Viewmodels
         public SettingsService SettingsService { get; }
         public ProfileService ProfileService { get; }
         public string[] ProfilesNames { get; set; }
-
-        public MainVM(SettingsService settingsService, ProfileService profileService)
-        {
-            Initialize();
-            StartProcWather();
-            SettingsService = settingsService;
-            ProfileService = profileService;
-        }
 
         public DelegateCommand OpenFileDialog => new(() =>
         {
@@ -43,13 +36,20 @@ namespace D2KeyHelper.Viewmodels
        });
         public DelegateCommand AddProfile => new(() =>
         {
-            new EditProfileWindow().ShowDialog();
+            //Zaglushka
         });
-
         public DelegateCommand EditProfile => new(() =>
         {
             new EditProfileWindow().ShowDialog();
         });
+
+        public MainVM(SettingsService settingsService, ProfileService profileService)
+        {
+            Initialize();
+            StartProcWather();
+            SettingsService = settingsService;
+            ProfileService = profileService;
+        }
 
         private void Initialize()
         {

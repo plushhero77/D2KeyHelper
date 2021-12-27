@@ -19,40 +19,38 @@ namespace D2KeyHelper.Viewmodels
         public ProfileService ProfileService { get; }
         public string[] CB_itemsCollection => Enum.GetNames(typeof(NativeWin32.Enums.VirtualKeyShort));
         public Visibility SaveStatus { get; set; }
+        public Profile EditableProfile { get; set; }
 
-        #region ICommand
         public DelegateCommand AddBinding => new DelegateCommand(() =>
         {
-            string str = "User Skill " + (ProfileService.CurrentProfile.KeyBindingCollection.Count + 1);
-            ProfileService.CurrentProfile.KeyBindingCollection.Add(new BindingPair(str));
+            string str = "User Skill " + (EditableProfile.KeyBindingCollection.Count + 1);
+            EditableProfile.KeyBindingCollection.Add(new BindingPair(str));
         });
-        public DelegateCommand<Window> SaveProfile => new DelegateCommand<Window>((window) =>
+        public DelegateCommand<Window> SaveProfile => new DelegateCommand<Window>(async (window) =>
         {
             Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
-            ProfileService.SaveAsync(ProfileService.CurrentProfile);
 
-            if (!ProfileService.Profiles.Contains(ProfileService.CurrentProfile))
+            if (await ProfileService.SaveToFileAsync(EditableProfile))
             {
-                ProfileService.Profiles.Add(ProfileService.CurrentProfile);
+                SaveStatus = Visibility.Visible;
+
+                var tim = new Timer(1000);
+                tim.Elapsed += new ElapsedEventHandler(delegate (object sender, ElapsedEventArgs e)
+                {
+                    ((Timer)sender).Stop();
+                    dispatcher.Invoke(() => { window.DialogResult = true; });
+                });
+                tim.Start();
             }
-
-            SaveStatus = Visibility.Visible;
-
-            var tim = new Timer(1000);
-            tim.Elapsed += new ElapsedEventHandler(delegate (object sender, ElapsedEventArgs e)
-            {
-                ((Timer)sender).Stop();
-                dispatcher.Invoke(()=> { window.DialogResult = true; });           
-            });
-            tim.Start();
         });
-        #endregion
 
         public EditProfileVM(ProfileService profileService)
         {
             ProfileService = profileService;
             SaveStatus = Visibility.Collapsed;
+            EditableProfile = ProfileService.CurrentProfile.Clone();
         }
+
 
     }
 }

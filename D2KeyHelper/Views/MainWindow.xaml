@@ -57,7 +57,11 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox Grid.Column="0" SelectedItem="{Binding ProfileService.CurrentProfile}" ItemsSource="{Binding ProfileService.Profiles}"/>
+                    <ComboBox Grid.Column="0"
+                              SelectedItem="{Binding ProfileService.CurrentProfile}"
+                              ItemsSource="{Binding ProfileService.ProfilesDictionary.Values}"
+                              DisplayMemberPath="Name"
+                              />
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Margin="3,0,0,0" Content="add" Command="{Binding AddProfile}"/>
                         <Button Margin="3,0,0,0" Content="Edit" Command="{Binding EditProfile}"/>

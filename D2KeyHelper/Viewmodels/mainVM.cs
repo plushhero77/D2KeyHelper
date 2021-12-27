@@ -36,7 +36,9 @@ namespace D2KeyHelper.Viewmodels
        });
         public DelegateCommand AddProfile => new(() =>
         {
-            //Zaglushka
+            ProfileService.AddNewProfile();
+
+            new EditProfileWindow().ShowDialog();
         });
         public DelegateCommand EditProfile => new(() =>
         {

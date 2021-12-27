@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0">
             <Label Content="Name :"/>
-            <TextBox Text="{Binding ProfileService.CurrentProfile.Name}"/>
+            <TextBox Text="{Binding EditableProfile.Name}"/>
         </DockPanel>
         <GroupBox Grid.Row="1" Header="Key Binding">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -25,7 +25,7 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
-                    <ItemsControl Grid.Row="0" ItemsSource="{Binding ProfileService.CurrentProfile.KeyBindingCollection}">
+                    <ItemsControl Grid.Row="0" ItemsSource="{Binding EditableProfile.KeyBindingCollection}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel/>

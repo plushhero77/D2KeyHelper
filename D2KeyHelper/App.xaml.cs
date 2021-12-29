@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using D2KeyHelper.Services;
+using D2KeyHelper.Viewmodels;
 
 namespace D2KeyHelper
 {
@@ -13,6 +15,10 @@ namespace D2KeyHelper
     /// </summary>
     public partial class App : Application
     {
-
+        public App()
+        {
+            ViewMapper.MapWindowType<MainVM, MainWindow>();
+            ViewMapper.MapWindowType<EditProfileVM, EditProfileWindow>();
+        }
     }
 }

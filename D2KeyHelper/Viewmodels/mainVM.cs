@@ -17,7 +17,16 @@ namespace D2KeyHelper.Viewmodels
         public Process D2RProcess { get; set; }
         public SettingsService SettingsService { get; }
         public ProfileService ProfileService { get; }
-        public string[] ProfilesNames { get; set; }
+        public WindowManagmentService WindowService { get; }
+
+        public MainVM(SettingsService settingsService, ProfileService profileService, WindowManagmentService windowService)
+        {
+            Initialize();
+            StartProcWather();
+            SettingsService = settingsService;
+            ProfileService = profileService;
+            WindowService = windowService;
+        }
 
         public DelegateCommand OpenFileDialog => new(() =>
         {
@@ -31,27 +40,19 @@ namespace D2KeyHelper.Viewmodels
             }
         });
         public DelegateCommand RunD2Process => new(() =>
-       {
-           Process.Start(SettingsService.Settings.ExeFilePath);
-       });
+           {
+               Process.Start(SettingsService.Settings.ExeFilePath);
+           });
         public DelegateCommand AddProfile => new(() =>
         {
-            ProfileService.AddNewProfile();
-
-            new EditProfileWindow().ShowDialog();
+            ProfileService.AddNewProfile(new Profile());
+            _ = WindowService.ShowModalViewModel(Ioc.Resolve<EditProfileVM>());
         });
         public DelegateCommand EditProfile => new(() =>
         {
-            new EditProfileWindow().ShowDialog();
+            _ = WindowService.ShowModalViewModel(Ioc.Resolve<EditProfileVM>());
         });
 
-        public MainVM(SettingsService settingsService, ProfileService profileService)
-        {
-            Initialize();
-            StartProcWather();
-            SettingsService = settingsService;
-            ProfileService = profileService;
-        }
 
         private void Initialize()
         {

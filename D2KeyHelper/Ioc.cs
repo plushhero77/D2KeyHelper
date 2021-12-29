@@ -22,10 +22,11 @@ namespace D2KeyHelper
             services.AddSingleton<MainVM>();
             services.AddTransient<EditProfileVM>();
 
-
             services.AddSingleton<HookService>();
             services.AddSingleton<ProfileService>();
             services.AddSingleton<SettingsService>();
+            services.AddSingleton<WindowManagmentService>();
+
             _provider = services.BuildServiceProvider();
         }
 

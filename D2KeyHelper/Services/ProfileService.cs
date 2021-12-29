@@ -18,8 +18,8 @@ namespace D2KeyHelper.Services
     {
         private readonly string pathToProfDir = Path.Combine(Directory.GetCurrentDirectory(), "Profiles");
         private readonly SettingsService settingsService;
-
-        public Dictionary<string, Profile> ProfilesDictionary { get; set; }
+        
+        public ObservableDictionary<string, Profile> ProfilesDictionary { get; set; }
         public Profile CurrentProfile { get; set; }
         public ProfileService(SettingsService _settingsService)
         {
@@ -66,7 +66,7 @@ namespace D2KeyHelper.Services
                     if (ProfilesDictionary.Count == 0)
                     {
                         var profile = new Profile();
-                        ProfilesDictionary.Add("new", profile);
+                        ProfilesDictionary.Add(null, profile);
                         CurrentProfile = profile;
                     }
                     else if (CurrentProfile == null)
@@ -83,10 +83,8 @@ namespace D2KeyHelper.Services
                 }
             });
         }
-        public async Task<bool> SaveToFileAsync(Profile profile)
+        private async Task<bool> SaveToFileAsync()
         {
-            CurrentProfile.Name = profile.Name;
-            CurrentProfile.KeyBindingCollection = profile.KeyBindingCollection;
             CurrentProfile.LastUpdateTime = DateTime.Now;
 
             return await Task<bool>.Factory.StartNew(() =>
@@ -94,13 +92,13 @@ namespace D2KeyHelper.Services
                 bool taskResult = false;
                 try
                 {
-                    string path = ProfilesDictionary.Where(x => x.Value == CurrentProfile).First().Key;
+                    string path = ProfilesDictionary.Where(x => x.Value == CurrentProfile).FirstOrDefault().Key;
 
-                    if (path == "new")
+                    if (path == null || path == "new")
                     {
+                        ProfilesDictionary.Remove(path);
                         path = Path.Combine(pathToProfDir, CurrentProfile.Name + ".profile");
-                        ProfilesDictionary.Remove("new");
-                        ProfilesDictionary.Add(path, CurrentProfile);
+                        ProfilesDictionary[path] = CurrentProfile;
                     }
 
                     byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(CurrentProfile);
@@ -122,13 +120,33 @@ namespace D2KeyHelper.Services
 
             });
         }
-        public void AddNewProfile()
+        public void AddNewProfile(Profile profile)
         {
-            Profile profile = new();
-            ProfilesDictionary.Add("new", profile);
+            ProfilesDictionary["new"] = profile;
             CurrentProfile = profile;
         }
-
-
+        public void EditProfile(Profile profile)
+        {
+            try
+            {
+                var key = ProfilesDictionary.First(x => x.Value == CurrentProfile).Key;
+                ProfilesDictionary.Remove(key);
+                ProfilesDictionary[key] = profile;
+                CurrentProfile = ProfilesDictionary[key];
+                _ = SaveToFileAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public void DeleteProfile()
+        {
+            throw new NotImplementedException();
+        }
+        public void CopyToNewProfile()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

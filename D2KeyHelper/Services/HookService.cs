@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.ComponentModel;
 using PropertyChanged;
+using DevExpress.Mvvm;
 
 namespace D2KeyHelper.Services
 {
 
-    public class HookService : INotifyPropertyChanged
+    public class HookService : BindableBase
     {
         private readonly NativeWin32.NativeWin32.HookProc hookProc;
         private IntPtr hHook = IntPtr.Zero;
         private int gameProcessId;
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public HookService()
         {

@@ -18,16 +18,20 @@ using System.Windows.Threading;
 
 namespace D2KeyHelper.Viewmodels
 {
-    public class EditProfileVM: BindableBase 
+    public class EditProfileVM : BindableBase, IViewModelBase
     {
-        private readonly ProfileService _profileService;
+        private readonly IProfileService _profileService;
+        private readonly IWindowManagmentService _windowService;
+        private readonly bool _isNew;
 
         public string[] CB_itemsCollection => Enum.GetNames(typeof(NativeWin32.Enums.VirtualKeyShort));
         public Profile EditableProfile { get; set; }
-        public EditProfileVM(ProfileService profileService)
+        public EditProfileVM(IProfileService profileService, IWindowManagmentService windowService, bool isNew = false)
         {
             _profileService = profileService;
-            EditableProfile = _profileService.CurrentProfile.Clone();
+            _windowService = windowService;
+            _isNew = isNew;
+            EditableProfile = isNew ? new Profile() : _profileService.CurrentProfile?.Clone();
         }
 
         public DelegateCommand AddBinding => new DelegateCommand(() =>
@@ -35,11 +39,21 @@ namespace D2KeyHelper.Viewmodels
             string str = "User Skill " + (EditableProfile.KeyBindingCollection.Count + 1);
             EditableProfile.KeyBindingCollection.Add(new BindingPair(str));
         });
-        public DelegateCommand<Window> SaveProfile => new(wnd =>
+        public DelegateCommand SaveProfile => new(() =>
         {
-            if (_profileService.EditOrCreateProfile(EditableProfile))
+            if (!_isNew)
             {
-                wnd.Close();
+                _profileService.EditCurrProfile(EditableProfile);
+                _windowService.CloseViewModel<EditProfileVM>();
+                Debug.WriteLine("profilesEdited");
+            }
+            else
+            {
+                if (_profileService.AddNewProfile(EditableProfile))
+                {
+                    Debug.WriteLine("Added new Profile");
+                    _windowService.CloseViewModel<EditProfileVM>();
+                }
             }
         });
         public DelegateCommand<BindingPair> DeleteBinding => new(pair =>

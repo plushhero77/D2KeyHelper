@@ -1,4 +1,5 @@
 ﻿using D2KeyHelper.src;
+using D2KeyHelper.src.Interfaces;
 using DevExpress.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -14,15 +15,16 @@ using System.Windows;
 
 namespace D2KeyHelper.Services
 {
-    public class ProfileService : BindableBase
+    public class ProfileService : BindableBase, IProfileService
     {
         private readonly string pathToProfDir = Path.Combine(Directory.GetCurrentDirectory(), "Profiles");
-        private readonly SettingsService settingsService;
-
-        public ObservableDictionary<string, Profile> ProfilesDictionary { get; set; }
+        private readonly ISettingsService settingsService;
+        private ObservableDictionary<string, Profile> profilesDictionary;
 
         public Profile CurrentProfile { get; set; }
-        public ProfileService(SettingsService _settingsService)
+        public ICollection<Profile> ProfilesCollection => profilesDictionary.Values;
+
+        public ProfileService(ISettingsService _settingsService)
         {
             Initialization();
             InitProfListAsync();
@@ -31,12 +33,12 @@ namespace D2KeyHelper.Services
 
         private void Initialization()
         {
-            ProfilesDictionary = new();
+            profilesDictionary = new();
             this.PropertyChanged += new PropertyChangedEventHandler(delegate (object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "CurrentProfile")
                 {
-                    settingsService.Settings.LastProfileName = CurrentProfile.Name;
+                    settingsService.Settings.LastProfileName = CurrentProfile != null ? CurrentProfile.Name : null;
                 }
             });
         }
@@ -58,24 +60,12 @@ namespace D2KeyHelper.Services
                         var bytes = File.ReadAllBytes(filePath);
                         var profile = JsonSerializer.Deserialize<Profile>(bytes);
 
-                        ProfilesDictionary.Add(filePath, profile);
+                        profilesDictionary.Add(filePath, profile);
                         if (profile.Name == settingsService.Settings.LastProfileName)
                         {
                             CurrentProfile = profile;
                         }
                     }
-                    if (ProfilesDictionary.Count == 0)
-                    {
-                        var profile = new Profile();
-                        ProfilesDictionary.Add(Path.Combine(pathToProfDir, profile.Name + ".profile"), profile);
-                        CurrentProfile = profile;
-                    }
-                    else if (CurrentProfile == null)
-                    {
-                        CurrentProfile = ProfilesDictionary.First().Value;
-                    }
-
-
                 }
                 catch (Exception ex)
                 {
@@ -93,7 +83,7 @@ namespace D2KeyHelper.Services
                 bool taskResult = false;
                 try
                 {
-                    string path = ProfilesDictionary.Where(x => x.Value == CurrentProfile).FirstOrDefault().Key;
+                    string path = profilesDictionary.Where(x => x.Value == CurrentProfile).FirstOrDefault().Key;
                     byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(CurrentProfile);
                     File.WriteAllBytes(path, bytes);
                     return taskResult = true;
@@ -113,41 +103,37 @@ namespace D2KeyHelper.Services
 
             });
         }
-        private bool AddNewProfile(Profile profile)
+        public bool AddNewProfile(Profile profile)
         {
             var path = Path.Combine(pathToProfDir, profile.Name + ".profile");
 
-            if (ProfilesDictionary.Values.Select(x => x.Name).ToArray().Contains(profile.Name))
+            if (profilesDictionary.Values.Select(x => x.Name).ToArray().Contains(profile.Name))
             {
                 MessageBox.Show($"Name {profile.Name} is already exist!");
                 return false;
             }
-            else if (ProfilesDictionary.Keys.Contains(path))
+            else if (profilesDictionary.Keys.Contains(path))
             {
                 MessageBox.Show($"File with name {profile.Name} is already exist!");
                 return false;
             }
 
-            ProfilesDictionary[path] = profile;
-            CurrentProfile = ProfilesDictionary[path];
+            profilesDictionary[path] = profile;
+            CurrentProfile = profilesDictionary[path];
             _ = SaveToFileAsync();
-            this.RaisePropertyChanged(nameof(ProfilesDictionary));
+            this.RaisePropertyChanged(nameof(ProfilesCollection));
             return true;
         }
-        public bool EditOrCreateProfile(Profile profile)
+        public bool EditCurrProfile(Profile profile)
         {
             try
             {
-                var key = ProfilesDictionary.FirstOrDefault(x => x.Value == CurrentProfile).Key;
-                if (key == null)
-                {
-                    return AddNewProfile(profile);
-                }
-                ProfilesDictionary.Remove(key);
-                ProfilesDictionary[key] = profile;
-                CurrentProfile = ProfilesDictionary[key];
+                var key = profilesDictionary.FirstOrDefault(x => x.Value == CurrentProfile).Key;
+                profilesDictionary.Remove(key);
+                profilesDictionary[key] = profile;
+                CurrentProfile = profilesDictionary[key];
                 _ = SaveToFileAsync();
-                this.RaisePropertyChanged(nameof(ProfilesDictionary));
+                this.RaisePropertyChanged(nameof(ProfilesCollection));
                 return true;
             }
             catch (Exception)
@@ -155,11 +141,33 @@ namespace D2KeyHelper.Services
                 throw;
             }
         }
-        public void DeleteProfile()
+        public bool DeleteProfile(Profile profile)
         {
-            throw new NotImplementedException();
+
+            if (profile == null)
+                throw new ArgumentNullException("Profile cannot be null!");
+
+            var valuePair = profilesDictionary.FirstOrDefault(x => x.Value == profile);
+            var index = profilesDictionary.GetIndex(valuePair);
+
+            if (!profilesDictionary.Remove(valuePair.Key))
+                throw new ArgumentException($" Profile {profile} ,not found on {profilesDictionary}");
+
+
+            if (File.Exists(valuePair.Key))
+                File.Delete(valuePair.Key);
+
+            index = profilesDictionary.Count == index ? index - 1 : index;
+            CurrentProfile = index >= 0 ? profilesDictionary[index] : null;
+
+            this.RaisePropertiesChanged(nameof(ProfilesCollection));
+
+            return true;
+
+
+
         }
-        public void CopyToNewProfile()
+        public Profile CopyToNewProfile(Profile profile)
         {
             throw new NotImplementedException();
         }

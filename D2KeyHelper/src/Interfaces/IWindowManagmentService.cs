@@ -11,7 +11,9 @@ namespace D2KeyHelper.src.Interfaces
     {
         public void ShowViewModel<T>();
         public void CloseViewModel<T>();
-        public Task ShowModalViewModel<T>();
-       
+        public Task ShowModalViewModel<T>(); 
+        public Task ShowModalViewModel(IViewModelBase viewModel);
+        public bool IsViewActive<T>();
+
     }
 }

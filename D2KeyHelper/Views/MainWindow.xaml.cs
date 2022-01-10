@@ -3,6 +3,7 @@ using D2KeyHelper.Viewmodels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,6 +27,7 @@ namespace D2KeyHelper
         {
             InitializeComponent();
             DataContext = Ioc.ResolveScoped<MainVM>();
+            Title = $"{AppDomain.CurrentDomain.FriendlyName}    ver. {Assembly.GetExecutingAssembly().GetName().Version}";
         }
 
     }

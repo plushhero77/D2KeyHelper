@@ -52,11 +52,17 @@
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <Label Content="D2R Process : " />
-                        <Label Content="{Binding D2RProcess, Converter={StaticResource D2ProcConv}}" />
+                        <Label
+                            Content="{Binding D2RProcess, Converter={StaticResource D2ProcConv}}"
+                            FontWeight="Bold"
+                            Foreground="{Binding RelativeSource={RelativeSource self}, Path=Content, Converter={StaticResource StrToBrushConv}}" />
                     </StackPanel>
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                         <Label Content="Hoock stat:" />
-                        <Label Content="{Binding HookService.IsHookSet}" />
+                        <Label
+                            Content="{Binding HookService.IsHookSet, Converter={StaticResource HookConv}}"
+                            FontWeight="Bold"
+                            Foreground="{Binding RelativeSource={RelativeSource self}, Path=Content, Converter={StaticResource StrToBrushConv}}" />
                         <Button
                             Margin="3,0,0,0"
                             Command="{Binding SetHook}"
@@ -83,7 +89,7 @@
                     <ComboBox
                         Grid.Column="0"
                         DisplayMemberPath="Name"
-                        ItemsSource="{Binding ProfileService.ProfilesDictionary.Values}"
+                        ItemsSource="{Binding ProfileService.ProfilesCollection}"
                         SelectedItem="{Binding ProfileService.CurrentProfile}" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button
@@ -144,7 +150,7 @@
                                 <RadioButton
                                     Content="Key Down"
                                     GroupName="KeyEvent"
-                                    IsChecked="{Binding SettingsService.Settings.IsKeyUpEvent, Converter={StaticResource KeyUpDownConverter}}" />
+                                    IsChecked="{Binding SettingsService.Settings.IsKeyUpEvent, Converter={StaticResource KeyUpDownConv}}" />
                             </StackPanel>
                         </GroupBox>
                     </Grid>

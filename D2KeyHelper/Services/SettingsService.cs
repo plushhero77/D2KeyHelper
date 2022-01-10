@@ -1,4 +1,5 @@
 ﻿using D2KeyHelper.src;
+using D2KeyHelper.src.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace D2KeyHelper.Services
 {
-    public class SettingsService
+    public class SettingsService : ISettingsService
     {
         public UserSettings Settings { get; private set; }
         private readonly string pathToSettings = Path.Combine(Directory.GetCurrentDirectory(), "UserSettings.set");
@@ -20,8 +21,7 @@ namespace D2KeyHelper.Services
             Load();
             Settings.PropertyChanged += new PropertyChangedEventHandler(delegate (object sender, PropertyChangedEventArgs e) { Save(); });
         }
-
-        private void Load()
+        public void Load()
         {
             if (File.Exists(pathToSettings))
             {
@@ -33,7 +33,7 @@ namespace D2KeyHelper.Services
                 Settings = new();
             }
         }
-        private void Save()
+        public void Save()
         {
             var bytes = JsonSerializer.SerializeToUtf8Bytes(Settings);
             File.WriteAllBytes(pathToSettings, bytes);

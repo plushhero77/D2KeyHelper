@@ -10,37 +10,45 @@ using System.Threading;
 using System.ComponentModel;
 using PropertyChanged;
 using DevExpress.Mvvm;
+using D2KeyHelper.src.Interfaces;
 
 namespace D2KeyHelper.Services
 {
 
-    public class HookService : BindableBase
+    public class HookService : BindableBase, IHookService
     {
         private readonly NativeWin32.NativeWin32.HookProc hookProc;
-        private readonly ProfileService _profileService;
+        private readonly IProfileService _profileService;
+        private readonly ISettingsService _settingsService;
         private IntPtr hHook = IntPtr.Zero;
         private int gameProcessId;
 
 
-        public HookService(ProfileService profileService)
+        public HookService(IProfileService profileService, ISettingsService settingsService)
         {
             hookProc = new NativeWin32.NativeWin32.HookProc(HookCallback);
             _profileService = profileService;
+            _settingsService = settingsService;
         }
 
-        public bool IsHookSet { get; set; }
+        public bool IsHookSet { get; private set; }
 
         private int HookCallback(int code, IntPtr wParam, IntPtr lParam)
         {
 
             _ = NativeWin32.NativeWin32.GetWindowThreadProcessId(NativeWin32.NativeWin32.GetForegroundWindow(), out int pid);
-            if (code < 0 || pid != gameProcessId) { return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam); }
+            if (code < 0 || pid != gameProcessId)  
+                return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam); 
 
 
             VirtualKeyShort wVk = Marshal.PtrToStructure<KEYBDINPUT>(lParam).wVk;
-            var binding = _profileService.CurrentProfile.KeyBindingCollection.Where(x => x.KeyShort == wVk).ToArray();
+            var binding = _profileService.CurrentProfile?.KeyBindingCollection.Where(x => x.KeyShort == wVk).ToArray();
+            if (binding == null)
+                return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
 
-            if (binding.Length > 0 && (Int32)WM_WPARAM.WM_KEYDOWN == wParam.ToInt32())
+            WM_WPARAM keyEvent = _settingsService.Settings.IsKeyUpEvent ? WM_WPARAM.WM_KEYUP : WM_WPARAM.WM_KEYDOWN;
+
+            if (binding.Length > 0 && (Int32)keyEvent == wParam.ToInt32())
             {
                 INPUT[] pInputs = new[]
                 {
@@ -87,9 +95,9 @@ namespace D2KeyHelper.Services
         {
             if (IsHookSet)
             {
-                _ = !NativeWin32.NativeWin32.UnhookWindowsHookEx(hHook);
+                IsHookSet = !NativeWin32.NativeWin32.UnhookWindowsHookEx(hHook);
             }
-            return IsHookSet = hHook.ToInt32() > 0;
+            return IsHookSet;
         }
 
     }

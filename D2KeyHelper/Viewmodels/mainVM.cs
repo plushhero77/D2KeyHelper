@@ -13,16 +13,16 @@ using D2KeyHelper.src.Interfaces;
 
 namespace D2KeyHelper.Viewmodels
 {
-    public class MainVM : BindableBase
+    public class MainVM : BindableBase, IViewModelBase
     {
         public Process D2RProcess { get; set; }
-        public HookService HookService { get; }
-        public SettingsService SettingsService { get; }
-        public ProfileService ProfileService { get; }
+        public IHookService HookService { get; }
+        public ISettingsService SettingsService { get; }
+        public IProfileService ProfileService { get; }
 
         private readonly IWindowManagmentService _windowService;
 
-        public MainVM(HookService hookService, SettingsService settingsService, ProfileService profileService, IWindowManagmentService windowService)
+        public MainVM(IHookService hookService, ISettingsService settingsService, IProfileService profileService, IWindowManagmentService windowService)
         {
             Initialize();
             StartProcWather();
@@ -49,15 +49,15 @@ namespace D2KeyHelper.Viewmodels
            });
         public DelegateCommand AddProfile => new(() =>
         {
-            _ = _windowService.ShowModalViewModel<EditProfileVM>();
+            _ = _windowService.ShowModalViewModel(new EditProfileVM(Ioc.Resolve<IProfileService>(), Ioc.Resolve<IWindowManagmentService>(), true));
         });
         public DelegateCommand EditProfile => new(() =>
         {
             _ = _windowService.ShowModalViewModel<EditProfileVM>();
         });
-        public DelegateCommand DeleteProfile => new(() => { MessageBox.Show(ProfileService.CurrentProfile.ToString()); });
-        public DelegateCommand SetHook => new(() => {HookService.SetHook(D2RProcess.Id); },!HookService.IsHookSet && D2RProcess !=null);
-        public DelegateCommand UnsetHook => new(() => { HookService.DeleteHook(); },HookService.IsHookSet);
+        public DelegateCommand DeleteProfile => new(() => { ProfileService.DeleteProfile(ProfileService.CurrentProfile); }, () => ProfileService.ProfilesCollection.Count != 0);
+        public DelegateCommand SetHook => new(() => { _ = HookService.SetHook(D2RProcess.Id); }, () => !HookService.IsHookSet && D2RProcess != null);
+        public DelegateCommand UnsetHook => new(() => { HookService.DeleteHook(); }, () => HookService.IsHookSet && D2RProcess != null);
 
 
         private void Initialize()

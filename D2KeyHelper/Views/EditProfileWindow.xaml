@@ -81,7 +81,6 @@
                             Grid.Column="1"
                             Margin="3"
                             Command="{Binding SaveProfile}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType={x:Type Window}}}"
                             Content="save &amp; close" />
                     </Grid>
                 </StackPanel>

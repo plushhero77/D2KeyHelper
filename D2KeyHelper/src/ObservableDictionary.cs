@@ -17,6 +17,7 @@ namespace D2KeyHelper.src
         private readonly ObservableCollection<KeyValuePair<TKey, TValue>> _items = new();
 
         public TValue this[TKey key] { get => _items.ToDictionary(x => x.Key)[key].Value; set => Add(key, value); }
+        public TValue this[int index] { get => _items[index].Value; }
 
         public ICollection<TKey> Keys => _items.Select(x => x.Key).ToArray();
 
@@ -93,6 +94,8 @@ namespace D2KeyHelper.src
                 return true;
             }
         }
+
+        public int GetIndex(KeyValuePair<TKey, TValue> valuePair) => _items.IndexOf(valuePair);
 
         IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
     }

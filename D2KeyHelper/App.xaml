@@ -7,7 +7,9 @@
     StartupUri="Views\MainWindow.xaml">
     <Application.Resources>
         <converters:ProcToFormatConverter x:Key="D2ProcConv" />
-        <converters:KeyUpDownEventConverter x:Key="KeyUpDownConverter" />
+        <converters:KeyUpDownEventConverter x:Key="KeyUpDownConv" />
+        <converters:HookToFormatConverter x:Key="HookConv" />
+        <converters:StrToBrushConverter x:Key="StrToBrushConv" />
         <converters:EnumToStringConverter x:Key="EnumToStringConv" />
     </Application.Resources>
 </Application>

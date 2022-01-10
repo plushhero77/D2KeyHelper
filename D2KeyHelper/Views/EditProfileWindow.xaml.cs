@@ -25,7 +25,7 @@ namespace D2KeyHelper
         {
             InitializeComponent();
             DataContext = Ioc.ResolveScoped<EditProfileVM>();
-            this.Loaded += new((o, e) => { Debug.WriteLine("Viwe loaded!"); });
+            this.Loaded += new((o, e) => { Debug.WriteLine("View loaded!"); });
         }
     }
 }

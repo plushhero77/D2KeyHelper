@@ -12,18 +12,17 @@ namespace D2KeyHelper
 {
     public static class Ioc
     {
-        private static ServiceProvider _provider;
-        static ServiceCollection services = new();
+        private static readonly ServiceProvider _provider;
+        static readonly ServiceCollection services = new();
 
         static Ioc()
         {
-
             services.AddSingleton<MainVM>();
             services.AddScoped<EditProfileVM>();
 
-            services.AddSingleton<HookService>();
-            services.AddSingleton<ProfileService>();
-            services.AddSingleton<SettingsService>();
+            services.AddSingleton<IHookService, HookService>();
+            services.AddSingleton<IProfileService, ProfileService>();
+            services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<IWindowManagmentService, WndMngService>();
 
             _provider = services.BuildServiceProvider();

@@ -5,11 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:D2KeyHelper"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:D2KeyHelper.Viewmodels"
     Title="EditProfileWindow"
     Width="300"
     Height="450"
     MinWidth="300"
-    DataContext="{Binding Source={StaticResource VML}, Path=EditProfileVM}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:EditProfileVM}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid Margin="5">
@@ -22,63 +23,69 @@
             <TextBox Text="{Binding EditableProfile.Name}" />
         </DockPanel>
         <GroupBox Grid.Row="1" Header="Key Binding">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-
-                    <ItemsControl Grid.Row="0" ItemsSource="{Binding EditableProfile.KeyBindingCollection}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="3,3,3,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Column="0" Text="{Binding Name}" />
-                                    <ComboBox
-                                        Grid.Column="1"
-                                        Margin="1,0,0,0"
-                                        ItemsSource="{Binding Source={StaticResource VML}, Path=EditProfileVM.CB_itemsCollection}"
-                                        SelectedItem="{Binding KeyShort, Converter={StaticResource EnumToStringConv}}" />
-                                    <Button
-                                        Grid.Column="3"
-                                        Margin="1,0,0,0"
-                                        Content="D" />
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <StackPanel Grid.Row="1">
-                        <Grid Margin="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Button
-                                Grid.Column="0"
-                                Margin="3"
-                                Command="{Binding AddBinding}"
-                                Content="add" />
-                            <Button
-                                Grid.Column="1"
-                                Margin="3"
-                                Command="{Binding SaveProfile}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType={x:Type Window}}}"
-                                Content="save &amp; close" />
-                        </Grid>
-                    </StackPanel>
-                </Grid>
-            </ScrollViewer>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <ItemsControl Grid.Row="0" ItemsSource="{Binding EditableProfile.KeyBindingCollection}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="3,3,3,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Grid.Column="0" Text="{Binding Name}" />
+                                        <ComboBox
+                                            Grid.Column="1"
+                                            Margin="1,0,0,0"
+                                            ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.CB_itemsCollection}"
+                                            SelectedItem="{Binding KeyShort, Converter={StaticResource EnumToStringConv}}" />
+                                        <Button
+                                            Grid.Column="2"
+                                            Margin="1,0,0,0"
+                                            Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.DeleteBinding}"
+                                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Content}"
+                                            Content="D" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1">
+                    <Grid Margin="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Column="0"
+                            Margin="3"
+                            Command="{Binding AddBinding}"
+                            Content="add" />
+                        <Button
+                            Grid.Column="1"
+                            Margin="3"
+                            Command="{Binding SaveProfile}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType={x:Type Window}}}"
+                            Content="save &amp; close" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
         </GroupBox>
     </Grid>
 </Window>

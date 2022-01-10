@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using D2KeyHelper.Viewmodels;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -23,6 +24,8 @@ namespace D2KeyHelper
         public EditProfileWindow()
         {
             InitializeComponent();
+            DataContext = Ioc.ResolveScoped<EditProfileVM>();
+            this.Loaded += new((o, e) => { Debug.WriteLine("Viwe loaded!"); });
         }
     }
 }

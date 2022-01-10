@@ -18,8 +18,9 @@ namespace D2KeyHelper.Services
     {
         private readonly string pathToProfDir = Path.Combine(Directory.GetCurrentDirectory(), "Profiles");
         private readonly SettingsService settingsService;
-        
+
         public ObservableDictionary<string, Profile> ProfilesDictionary { get; set; }
+
         public Profile CurrentProfile { get; set; }
         public ProfileService(SettingsService _settingsService)
         {
@@ -66,7 +67,7 @@ namespace D2KeyHelper.Services
                     if (ProfilesDictionary.Count == 0)
                     {
                         var profile = new Profile();
-                        ProfilesDictionary.Add(null, profile);
+                        ProfilesDictionary.Add(Path.Combine(pathToProfDir, profile.Name + ".profile"), profile);
                         CurrentProfile = profile;
                     }
                     else if (CurrentProfile == null)
@@ -93,14 +94,6 @@ namespace D2KeyHelper.Services
                 try
                 {
                     string path = ProfilesDictionary.Where(x => x.Value == CurrentProfile).FirstOrDefault().Key;
-
-                    if (path == null || path == "new")
-                    {
-                        ProfilesDictionary.Remove(path);
-                        path = Path.Combine(pathToProfDir, CurrentProfile.Name + ".profile");
-                        ProfilesDictionary[path] = CurrentProfile;
-                    }
-
                     byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(CurrentProfile);
                     File.WriteAllBytes(path, bytes);
                     return taskResult = true;
@@ -120,20 +113,42 @@ namespace D2KeyHelper.Services
 
             });
         }
-        public void AddNewProfile(Profile profile)
+        private bool AddNewProfile(Profile profile)
         {
-            ProfilesDictionary["new"] = profile;
-            CurrentProfile = profile;
+            var path = Path.Combine(pathToProfDir, profile.Name + ".profile");
+
+            if (ProfilesDictionary.Values.Select(x => x.Name).ToArray().Contains(profile.Name))
+            {
+                MessageBox.Show($"Name {profile.Name} is already exist!");
+                return false;
+            }
+            else if (ProfilesDictionary.Keys.Contains(path))
+            {
+                MessageBox.Show($"File with name {profile.Name} is already exist!");
+                return false;
+            }
+
+            ProfilesDictionary[path] = profile;
+            CurrentProfile = ProfilesDictionary[path];
+            _ = SaveToFileAsync();
+            this.RaisePropertyChanged(nameof(ProfilesDictionary));
+            return true;
         }
-        public void EditProfile(Profile profile)
+        public bool EditOrCreateProfile(Profile profile)
         {
             try
             {
-                var key = ProfilesDictionary.First(x => x.Value == CurrentProfile).Key;
+                var key = ProfilesDictionary.FirstOrDefault(x => x.Value == CurrentProfile).Key;
+                if (key == null)
+                {
+                    return AddNewProfile(profile);
+                }
                 ProfilesDictionary.Remove(key);
                 ProfilesDictionary[key] = profile;
                 CurrentProfile = ProfilesDictionary[key];
                 _ = SaveToFileAsync();
+                this.RaisePropertyChanged(nameof(ProfilesDictionary));
+                return true;
             }
             catch (Exception)
             {

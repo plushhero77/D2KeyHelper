@@ -13,7 +13,7 @@ namespace D2KeyHelper.src
     public class Profile : BindableBase ,IClonealabe<Profile>
     {
         public ObservableCollection<BindingPair> KeyBindingCollection { get; set; } = new();
-        public string Name { get; set; } = "Defalut";
+        public string Name { get; set; } = "New_Profile";
         public DateTime LastUpdateTime { get; set; } = DateTime.Now;
 
         public Profile Clone()

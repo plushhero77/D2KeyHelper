@@ -17,13 +17,15 @@ namespace D2KeyHelper.Services
     public class HookService : BindableBase
     {
         private readonly NativeWin32.NativeWin32.HookProc hookProc;
+        private readonly ProfileService _profileService;
         private IntPtr hHook = IntPtr.Zero;
         private int gameProcessId;
 
 
-        public HookService()
+        public HookService(ProfileService profileService)
         {
             hookProc = new NativeWin32.NativeWin32.HookProc(HookCallback);
+            _profileService = profileService;
         }
 
         public bool IsHookSet { get; set; }
@@ -36,39 +38,39 @@ namespace D2KeyHelper.Services
 
 
             VirtualKeyShort wVk = Marshal.PtrToStructure<KEYBDINPUT>(lParam).wVk;
-            //src.BindingKey[] binding = profileService.CurrentProfile.BindingKeysCollection.Where(x => x.Value == wVk.ToString()).ToArray();
+            var binding = _profileService.CurrentProfile.KeyBindingCollection.Where(x => x.KeyShort == wVk).ToArray();
 
-            //if (binding.Length > 0 && ((Int32)Enum.Parse<WM_WPARAM>(binding[0].EventParam)) == wParam.ToInt32())
-            //{
-            //    INPUT[] pInputs = new[]
-            //    {
-            //            new INPUT()
-            //            {
-            //                type  =(uint)INPUT_TYPE.INPUT_MOUSE,
-            //                U =new InputUnion()
-            //                {
-            //                    mi= new MOUSEINPUT
-            //                    {
-            //                        dwFlags = MOUSEEVENTF.RIGHTDOWN
-            //                    }
-            //                }
+            if (binding.Length > 0 && (Int32)WM_WPARAM.WM_KEYDOWN == wParam.ToInt32())
+            {
+                INPUT[] pInputs = new[]
+                {
+                        new INPUT()
+                        {
+                            type  =(uint)INPUT_TYPE.INPUT_MOUSE,
+                            U =new InputUnion()
+                            {
+                                mi= new MOUSEINPUT
+                                {
+                                    dwFlags = MOUSEEVENTF.RIGHTDOWN
+                                }
+                            }
 
-            //            },
-            //            new INPUT()
-            //            {
-            //                type  =(uint)INPUT_TYPE.INPUT_MOUSE,
-            //                U =new InputUnion()
-            //                {
-            //                    mi= new MOUSEINPUT
-            //                    {
-            //                        dwFlags = MOUSEEVENTF.RIGHTUP
-            //                    }
-            //                }
-            //            }
-            //     };
+                        },
+                        new INPUT()
+                        {
+                            type  =(uint)INPUT_TYPE.INPUT_MOUSE,
+                            U =new InputUnion()
+                            {
+                                mi= new MOUSEINPUT
+                                {
+                                    dwFlags = MOUSEEVENTF.RIGHTUP
+                                }
+                            }
+                        }
+                 };
 
-            //    _ = NativeWin32.NativeWin32.SendInput(((uint)pInputs.Length), pInputs, INPUT.Size);
-            //}
+                _ = NativeWin32.NativeWin32.SendInput(((uint)pInputs.Length), pInputs, INPUT.Size);
+            }
             return NativeWin32.NativeWin32.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
         public bool SetHook(int id)

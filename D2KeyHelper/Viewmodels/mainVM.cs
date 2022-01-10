@@ -9,23 +9,27 @@ using System;
 using System.Configuration;
 using System.Windows;
 using D2KeyHelper.src;
+using D2KeyHelper.src.Interfaces;
 
 namespace D2KeyHelper.Viewmodels
 {
     public class MainVM : BindableBase
     {
         public Process D2RProcess { get; set; }
+        public HookService HookService { get; }
         public SettingsService SettingsService { get; }
         public ProfileService ProfileService { get; }
-        public WindowManagmentService WindowService { get; }
 
-        public MainVM(SettingsService settingsService, ProfileService profileService, WindowManagmentService windowService)
+        private readonly IWindowManagmentService _windowService;
+
+        public MainVM(HookService hookService, SettingsService settingsService, ProfileService profileService, IWindowManagmentService windowService)
         {
             Initialize();
             StartProcWather();
+            HookService = hookService;
             SettingsService = settingsService;
             ProfileService = profileService;
-            WindowService = windowService;
+            _windowService = windowService;
         }
 
         public DelegateCommand OpenFileDialog => new(() =>
@@ -45,13 +49,15 @@ namespace D2KeyHelper.Viewmodels
            });
         public DelegateCommand AddProfile => new(() =>
         {
-            ProfileService.AddNewProfile(new Profile());
-            _ = WindowService.ShowModalViewModel(Ioc.Resolve<EditProfileVM>());
+            _ = _windowService.ShowModalViewModel<EditProfileVM>();
         });
         public DelegateCommand EditProfile => new(() =>
         {
-            _ = WindowService.ShowModalViewModel(Ioc.Resolve<EditProfileVM>());
+            _ = _windowService.ShowModalViewModel<EditProfileVM>();
         });
+        public DelegateCommand DeleteProfile => new(() => { MessageBox.Show(ProfileService.CurrentProfile.ToString()); });
+        public DelegateCommand SetHook => new(() => {HookService.SetHook(D2RProcess.Id); },!HookService.IsHookSet && D2RProcess !=null);
+        public DelegateCommand UnsetHook => new(() => { HookService.DeleteHook(); },HookService.IsHookSet);
 
 
         private void Initialize()

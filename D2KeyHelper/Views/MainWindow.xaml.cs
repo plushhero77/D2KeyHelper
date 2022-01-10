@@ -1,4 +1,5 @@
 ﻿using D2KeyHelper.Services;
+using D2KeyHelper.Viewmodels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace D2KeyHelper
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = Ioc.ResolveScoped<MainVM>();
         }
 
     }
